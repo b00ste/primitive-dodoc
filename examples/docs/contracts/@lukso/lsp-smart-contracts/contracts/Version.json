@@ -1,0 +1,22 @@
+{
+  "methods": {
+    "VERSION()": {
+      "stateMutability": "view",
+      "code": "function VERSION() external view returns (string)",
+      "inputs": {},
+      "outputs": {
+        "_0": {
+          "type": "string",
+          "description": "The version of the the contract."
+        }
+      },
+      "notice": "Contract version.",
+      "details": "Get the version of the contract."
+    }
+  },
+  "events": {},
+  "errors": {},
+  "internalMethods": {},
+  "path": "@lukso/lsp-smart-contracts/contracts",
+  "name": "Version"
+}

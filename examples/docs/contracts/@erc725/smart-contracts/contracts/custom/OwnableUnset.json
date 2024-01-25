@@ -1,0 +1,83 @@
+{
+  "methods": {
+    "owner()": {
+      "stateMutability": "view",
+      "code": "function owner() external view returns (address)",
+      "inputs": {},
+      "outputs": {
+        "_0": {
+          "type": "address"
+        }
+      },
+      "details": "Returns the address of the current owner."
+    },
+    "renounceOwnership()": {
+      "stateMutability": "nonpayable",
+      "code": "function renounceOwnership() external nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+    },
+    "transferOwnership(address)": {
+      "stateMutability": "nonpayable",
+      "code": "function transferOwnership(address newOwner) external nonpayable",
+      "inputs": {
+        "newOwner": {
+          "type": "address"
+        }
+      },
+      "outputs": {},
+      "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+    }
+  },
+  "events": {
+    "OwnershipTransferred(address,address)": {
+      "code": "event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)",
+      "inputs": {
+        "previousOwner": {
+          "type": "address",
+          "indexed": true
+        },
+        "newOwner": {
+          "type": "address",
+          "indexed": true
+        }
+      }
+    }
+  },
+  "errors": {
+    "OwnableCallerNotTheOwner(address)": {
+      "code": "error OwnableCallerNotTheOwner(address callerAddress)",
+      "inputs": {
+        "callerAddress": {
+          "type": "address",
+          "description": "The address that tried to make the call."
+        }
+      },
+      "details": "Reverts when only the owner is allowed to call the function."
+    },
+    "OwnableCannotSetZeroAddressAsOwner()": {
+      "code": "error OwnableCannotSetZeroAddressAsOwner()",
+      "inputs": {},
+      "details": "Reverts when trying to set `address(0)` as the contract owner when deploying the contract, initializing it or transferring ownership of the contract."
+    }
+  },
+  "internalMethods": {
+    "_checkOwner()": {
+      "code": "function _checkOwner() internal view",
+      "inputs": {},
+      "outputs": {},
+      "details": "Throws if the sender is not the owner."
+    },
+    "_setOwner(address)": {
+      "code": "function _setOwner(address newOwner) internal nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "details": "Changes the owner if `newOwner` and oldOwner are different\n This pattern is useful in inheritance."
+    }
+  },
+  "path": "@erc725/smart-contracts/contracts/custom",
+  "title": "OwnableUnset",
+  "details": "modified version of OpenZeppelin implementation, where: - _setOwner(address) function is internal, so this function can be used in constructor of contracts implementation (instead of using transferOwnership(address) - the contract does not inherit from Context contract",
+  "name": "OwnableUnset"
+}

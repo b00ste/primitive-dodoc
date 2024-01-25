@@ -1,0 +1,63 @@
+{
+  "methods": {
+    "lsp20VerifyCall(address,address,address,uint256,bytes)": {
+      "stateMutability": "nonpayable",
+      "code": "function lsp20VerifyCall(address requestor, address target, address caller, uint256 value, bytes callData) external nonpayable returns (bytes4 returnedStatus)",
+      "inputs": {
+        "requestor": {
+          "type": "address",
+          "description": "The address that requested to make the call to `target`."
+        },
+        "target": {
+          "type": "address",
+          "description": "The address of the contract that implements the `LSP20CallVerification` interface."
+        },
+        "caller": {
+          "type": "address",
+          "description": "The address who called the function on the `target` contract."
+        },
+        "value": {
+          "type": "uint256",
+          "description": "The value sent by the caller to the function called on the msg.sender"
+        },
+        "callData": {
+          "type": "bytes",
+          "description": "The calldata sent by the caller to the msg.sender"
+        }
+      },
+      "outputs": {
+        "returnedStatus": {
+          "type": "bytes4",
+          "description": "MUST return the first 3 bytes of `lsp20VerifyCall(address,uint256,bytes)` function selector if the call to the function is allowed, concatened with a byte that determines if the lsp20VerifyCallResult function should be called after the original function call. The byte that invoke the lsp20VerifyCallResult function is strictly `0x01`."
+        }
+      }
+    },
+    "lsp20VerifyCallResult(bytes32,bytes)": {
+      "stateMutability": "nonpayable",
+      "code": "function lsp20VerifyCallResult(bytes32 callHash, bytes callResult) external nonpayable returns (bytes4)",
+      "inputs": {
+        "callHash": {
+          "type": "bytes32",
+          "description": "The keccak256 hash of the parameters of {lsp20VerifyCall} concatenated"
+        },
+        "callResult": {
+          "type": "bytes",
+          "description": "The value result of the function called on the msg.sender"
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes4",
+          "description": "MUST return the lsp20VerifyCallResult function selector if the call to the function is allowed"
+        }
+      }
+    }
+  },
+  "events": {},
+  "errors": {},
+  "internalMethods": {},
+  "path": "@lukso/lsp-smart-contracts/contracts/LSP20CallVerification",
+  "title": "Interface for the LSP20 Call Verification standard, a set of functions intended to perform verifications on behalf of another contract.",
+  "details": "Interface to be inherited for contract supporting LSP20-CallVerification",
+  "name": "ILSP20CallVerifier"
+}

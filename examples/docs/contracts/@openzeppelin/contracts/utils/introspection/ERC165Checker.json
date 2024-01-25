@@ -1,0 +1,55 @@
+{
+  "methods": {},
+  "events": {},
+  "errors": {},
+  "internalMethods": {
+    "supportsERC165(address)": {
+      "code": "function supportsERC165(address account) internal view returns (bool)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns true if `account` supports the {IERC165} interface."
+    },
+    "supportsInterface(address,bytes4)": {
+      "code": "function supportsInterface(address account, bytes4 interfaceId) internal view returns (bool)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns true if `account` supports the interface defined by\n `interfaceId`. Support for {IERC165} itself is queried automatically.\n See {IERC165-supportsInterface}."
+    },
+    "getSupportedInterfaces(address,bytes4[])": {
+      "code": "function getSupportedInterfaces(address account, bytes4[] interfaceIds) internal view returns (bool[])",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns a boolean array where each value corresponds to the\n interfaces passed in and whether they're supported or not. This allows\n you to batch check interfaces for a contract where your expectation\n is that some interfaces may not be supported.\n See {IERC165-supportsInterface}.\n _Available since v3.4._"
+    },
+    "supportsAllInterfaces(address,bytes4[])": {
+      "code": "function supportsAllInterfaces(address account, bytes4[] interfaceIds) internal view returns (bool)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns true if `account` supports all the interfaces defined in\n `interfaceIds`. Support for {IERC165} itself is queried automatically.\n Batch-querying can lead to gas savings by skipping repeated checks for\n {IERC165} support.\n See {IERC165-supportsInterface}."
+    },
+    "supportsERC165InterfaceUnchecked(address,bytes4)": {
+      "code": "function supportsERC165InterfaceUnchecked(address account, bytes4 interfaceId) internal view returns (bool)",
+      "inputs": {
+        "account": {
+          "type": "address",
+          "description": "The address of the contract to query for support of an interface"
+        },
+        "interfaceId": {
+          "type": "bytes4",
+          "description": "The interface identifier, as specified in ERC-165"
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bool",
+          "description": "true if the contract at account indicates support of the interface with"
+        }
+      },
+      "notice": "Query if a contract implements an interface, does not check ERC165 support",
+      "details": "Assumes that account contains a contract that supports ERC165, otherwise\n the behavior of this method is undefined. This precondition can be checked\n with {supportsERC165}.\n Some precompiled contracts will falsely indicate support for a given interface, so caution\n should be exercised when using this function.\n Interface identification is specified in ERC-165."
+    }
+  },
+  "path": "@openzeppelin/contracts/utils/introspection",
+  "details": "Library used to query support of an interface declared via {IERC165}. Note that these functions return the actual result of the query: they do not `revert` if an interface is not supported. It is up to the caller to decide what to do in these cases.",
+  "name": "ERC165Checker"
+}

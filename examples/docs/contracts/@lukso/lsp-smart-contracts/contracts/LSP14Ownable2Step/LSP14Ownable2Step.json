@@ -1,0 +1,219 @@
+{
+  "methods": {
+    "RENOUNCE_OWNERSHIP_CONFIRMATION_DELAY()": {
+      "stateMutability": "view",
+      "code": "function RENOUNCE_OWNERSHIP_CONFIRMATION_DELAY() external view returns (uint256)",
+      "inputs": {},
+      "outputs": {
+        "_0": {
+          "type": "uint256",
+          "description": "Number of blocks."
+        }
+      },
+      "details": "The number of block that MUST pass before one is able to confirm renouncing ownership."
+    },
+    "RENOUNCE_OWNERSHIP_CONFIRMATION_PERIOD()": {
+      "stateMutability": "view",
+      "code": "function RENOUNCE_OWNERSHIP_CONFIRMATION_PERIOD() external view returns (uint256)",
+      "inputs": {},
+      "outputs": {
+        "_0": {
+          "type": "uint256",
+          "description": "Number of blocks."
+        }
+      },
+      "details": "The number of blocks during which one can renounce ownership."
+    },
+    "acceptOwnership()": {
+      "stateMutability": "nonpayable",
+      "code": "function acceptOwnership() external nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "notice": "`msg.sender` is accepting ownership of contract: `address(this)`.",
+      "details": "Transfer ownership of the contract from the current {owner()} to the {pendingOwner()}. Once this function is called: - The current {owner()} will lose access to the functions restricted to the {owner()} only. - The {pendingOwner()} will gain access to the functions restricted to the {owner()} only.",
+      "custom:requirements": "This function can only be called by the {pendingOwner()}."
+    },
+    "owner()": {
+      "stateMutability": "view",
+      "code": "function owner() external view returns (address)",
+      "inputs": {},
+      "outputs": {
+        "_0": {
+          "type": "address"
+        }
+      },
+      "details": "Returns the address of the current owner."
+    },
+    "pendingOwner()": {
+      "stateMutability": "view",
+      "code": "function pendingOwner() external view returns (address)",
+      "inputs": {},
+      "outputs": {
+        "_0": {
+          "type": "address"
+        }
+      },
+      "details": "The address that ownership of the contract is transferred to. This address may use {acceptOwnership()} to gain ownership of the contract.",
+      "custom:info": "If no ownership transfer is in progress, the pendingOwner will be `address(0).`."
+    },
+    "renounceOwnership()": {
+      "stateMutability": "nonpayable",
+      "code": "function renounceOwnership() external nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "notice": "`msg.sender` is renouncing ownership of contract `address(this)`.",
+      "details": "Renounce ownership of the contract in a 2-step process. 1. The first call will initiate the process of renouncing ownership. 2. The second call is used as a confirmation and will leave the contract without an owner.",
+      "custom:danger": "Leaves the contract without an owner. Once ownership of the contract has been renounced, any function that is restricted to be called only by the owner will be permanently inaccessible, making these functions not callable anymore and unusable."
+    },
+    "transferOwnership(address)": {
+      "stateMutability": "nonpayable",
+      "code": "function transferOwnership(address newOwner) external nonpayable",
+      "inputs": {
+        "newOwner": {
+          "type": "address",
+          "description": "The address of the new owner."
+        }
+      },
+      "outputs": {},
+      "notice": "Transfer ownership initiated by `newOwner`.",
+      "details": "Initiate the process of transferring ownership of the contract by setting the new owner as the pending owner. If the new owner is a contract that supports + implements LSP1, this will also attempt to notify the new owner that ownership has been transferred to them by calling the {universalReceiver()} function on the `newOwner` contract.",
+      "custom:requirements": "`newOwner` cannot accept ownership of the contract in the same transaction. (For instance, via a callback from its {universalReceiver(...)} function)."
+    }
+  },
+  "events": {
+    "OwnershipRenounced()": {
+      "code": "event OwnershipRenounced()",
+      "inputs": {},
+      "notice": "Successfully renounced ownership of the contract. This contract is now owned by anyone, it's owner is `address(0)`.",
+      "details": "Emitted when the ownership of the contract has been renounced."
+    },
+    "OwnershipTransferStarted(address,address)": {
+      "code": "event OwnershipTransferStarted(address indexed previousOwner, address indexed newOwner)",
+      "inputs": {
+        "previousOwner": {
+          "type": "address",
+          "indexed": true,
+          "description": "The address of the previous owner."
+        },
+        "newOwner": {
+          "type": "address",
+          "indexed": true,
+          "description": "The address of the new owner."
+        }
+      },
+      "notice": "The transfer of ownership of the contract was initiated. Pending new owner set to: `newOwner`.",
+      "details": "Emitted when {transferOwnership(..)} was called and the first step of transferring ownership completed successfully which leads to {pendingOwner} being updated."
+    },
+    "OwnershipTransferred(address,address)": {
+      "code": "event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)",
+      "inputs": {
+        "previousOwner": {
+          "type": "address",
+          "indexed": true
+        },
+        "newOwner": {
+          "type": "address",
+          "indexed": true
+        }
+      }
+    },
+    "RenounceOwnershipStarted()": {
+      "code": "event RenounceOwnershipStarted()",
+      "inputs": {},
+      "notice": "Ownership renouncement initiated.",
+      "details": "Emitted when starting the {renounceOwnership(..)} 2-step process."
+    }
+  },
+  "errors": {
+    "LSP14CallerNotPendingOwner(address)": {
+      "code": "error LSP14CallerNotPendingOwner(address caller)",
+      "inputs": {
+        "caller": {
+          "type": "address",
+          "description": "The address that tried to accept ownership."
+        }
+      },
+      "details": "Reverts when the `caller` that is trying to accept ownership of the contract is not the pending owner."
+    },
+    "LSP14CannotTransferOwnershipToSelf()": {
+      "code": "error LSP14CannotTransferOwnershipToSelf()",
+      "inputs": {},
+      "notice": "Cannot transfer ownership to the address of the contract itself.",
+      "details": "Reverts when trying to transfer ownership to the `address(this)`."
+    },
+    "LSP14MustAcceptOwnershipInSeparateTransaction()": {
+      "code": "error LSP14MustAcceptOwnershipInSeparateTransaction()",
+      "inputs": {},
+      "notice": "Cannot accept ownership in the same transaction with {transferOwnership(...)}.",
+      "details": "Reverts when pending owner accept ownership in the same transaction of transferring ownership."
+    },
+    "LSP14NotInRenounceOwnershipInterval(uint256,uint256)": {
+      "code": "error LSP14NotInRenounceOwnershipInterval(uint256 renounceOwnershipStart, uint256 renounceOwnershipEnd)",
+      "inputs": {
+        "renounceOwnershipStart": {
+          "type": "uint256",
+          "description": "The start timestamp when one can confirm the renouncement of ownership."
+        },
+        "renounceOwnershipEnd": {
+          "type": "uint256",
+          "description": "The end timestamp when one can confirm the renouncement of ownership."
+        }
+      },
+      "notice": "Cannot confirm ownership renouncement yet. The ownership renouncement is allowed from: `renounceOwnershipStart` until: `renounceOwnershipEnd`.",
+      "details": "Reverts when trying to renounce ownership before the initial confirmation delay."
+    },
+    "OwnableCallerNotTheOwner(address)": {
+      "code": "error OwnableCallerNotTheOwner(address callerAddress)",
+      "inputs": {
+        "callerAddress": {
+          "type": "address",
+          "description": "The address that tried to make the call."
+        }
+      },
+      "details": "Reverts when only the owner is allowed to call the function."
+    }
+  },
+  "internalMethods": {
+    "_checkOwner()": {
+      "code": "function _checkOwner() internal view",
+      "inputs": {},
+      "outputs": {},
+      "details": "Throws if the sender is not the owner."
+    },
+    "_setOwner(address)": {
+      "code": "function _setOwner(address newOwner) internal nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "details": "Changes the owner if `newOwner` and oldOwner are different\n This pattern is useful in inheritance."
+    },
+    "_transferOwnership(address)": {
+      "code": "function _transferOwnership(address newOwner) internal nonpayable",
+      "inputs": {
+        "newOwner": {
+          "type": "address",
+          "description": "The address of the new pending owner."
+        }
+      },
+      "outputs": {},
+      "details": "Set the pending owner of the contract and cancel any renounce ownership process that was previously started.",
+      "custom:requirements": "`newOwner` cannot be the address of the contract itself."
+    },
+    "_acceptOwnership()": {
+      "code": "function _acceptOwnership() internal nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "details": "Set the pending owner of the contract as the new owner."
+    },
+    "_renounceOwnership()": {
+      "code": "function _renounceOwnership() internal nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "details": "Initiate or confirm the process of renouncing ownership after a specific delay of blocks have passed."
+    }
+  },
+  "path": "@lukso/lsp-smart-contracts/contracts/LSP14Ownable2Step",
+  "title": "LSP14Ownable2Step",
+  "details": "This contract is a modified version of the [`OwnableUnset.sol`] implementation, where transferring and renouncing ownership works as a 2-step process. This can be used as a confirmation mechanism to prevent potential mistakes when transferring ownership of the contract, where the control of the contract could be lost forever. (_e.g: providing the wrong address as a parameter to the function, transferring ownership to an EOA for which the user lost its private key, etc..._)",
+  "author": "Fabian Vogelsteller <fabian@lukso.network>, Jean Cavallera (CJ42), Yamen Merhi (YamenMerhi), Daniel Afteni (B00ste)",
+  "name": "LSP14Ownable2Step"
+}

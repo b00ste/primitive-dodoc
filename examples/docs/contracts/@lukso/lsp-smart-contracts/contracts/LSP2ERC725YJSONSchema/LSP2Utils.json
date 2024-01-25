@@ -1,0 +1,323 @@
+{
+  "methods": {},
+  "events": {},
+  "errors": {},
+  "internalMethods": {
+    "generateSingletonKey(string)": {
+      "code": "function generateSingletonKey(string keyName) internal pure returns (bytes32)",
+      "inputs": {
+        "keyName": {
+          "type": "string",
+          "description": "The string to hash to generate a Singleton data key."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes32",
+          "description": "The generated `bytes32` data key of key type Singleton."
+        }
+      },
+      "details": "Generates a data key of keyType Singleton by hashing the string `keyName`. As:\n ```\n keccak256(\"keyName\")\n ```"
+    },
+    "generateArrayKey(string)": {
+      "code": "function generateArrayKey(string arrayKeyName) internal pure returns (bytes32)",
+      "inputs": {
+        "arrayKeyName": {
+          "type": "string",
+          "description": "The string that will be used to generate a data key of key type Array."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes32",
+          "description": "The generated `bytes32` data key of key type Array."
+        }
+      },
+      "details": "Generates a data key of keyType Array by hashing `arrayKeyName`. As:\n ```\n keccak256(\"arrayKeyName[]\")\n ```",
+      "custom:requirements\n": "- The `keyName` must include at the end of the string the square brackets `\"[]\"`."
+    },
+    "generateArrayElementKeyAtIndex(bytes32,uint128)": {
+      "code": "function generateArrayElementKeyAtIndex(bytes32 arrayKey, uint128 index) internal pure returns (bytes32)",
+      "inputs": {
+        "arrayKey": {
+          "type": "bytes32",
+          "description": "The Array data key from which to generate the Array data key at a specific `index`."
+        },
+        "index": {
+          "type": "uint128",
+          "description": "The index number in the `arrayKey`."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes32",
+          "description": "The generated `bytes32` data key of key type Array at a specific `index`."
+        }
+      },
+      "details": "Generates an Array data key at a specific `index` by concatenating together the first 16 bytes of `arrayKey`\n with the 16 bytes of `index`. As:\n ```\n arrayKey[index]\n ```"
+    },
+    "generateMappingKey(string,string)": {
+      "code": "function generateMappingKey(string firstWord, string lastWord) internal pure returns (bytes32)",
+      "inputs": {
+        "firstWord": {
+          "type": "string",
+          "description": "The word to retrieve the first 10 bytes of its hash."
+        },
+        "lastWord": {
+          "type": "string",
+          "description": "The word to retrieve the first 10 bytes of its hash."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes32",
+          "description": "The generated `bytes32` data key of key type Mapping that map `firstWord` to a specific `lastWord`."
+        }
+      },
+      "details": "Generates a data key of key type Mapping that map `firstWord` to `lastWord`. This is done by hashing two strings words `firstWord` and `lastWord`. As:\n ```\n bytes10(firstWordHash):0000:bytes20(lastWordHash)\n ```"
+    },
+    "generateMappingKey(string,address)": {
+      "code": "function generateMappingKey(string firstWord, address addr) internal pure returns (bytes32)",
+      "inputs": {
+        "firstWord": {
+          "type": "string",
+          "description": "The word to retrieve the first 10 bytes of its hash."
+        },
+        "addr": {
+          "type": "address",
+          "description": "An address to map `firstWord` to."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes32",
+          "description": "The generated `bytes32` data key of key type Mapping that map `firstWord` to a specific address `addr`."
+        }
+      },
+      "details": "Generates a data key of key type Mapping that map `firstWord` to an address `addr`.\n This is done by hashing the string word `firstWord` and concatenating its first 10 bytes with `addr`. As:\n ```\n bytes10(firstWordHash):0000:<address>\n ```"
+    },
+    "generateMappingKey(bytes10,bytes20)": {
+      "code": "function generateMappingKey(bytes10 keyPrefix, bytes20 bytes20Value) internal pure returns (bytes32)",
+      "inputs": {
+        "keyPrefix": {
+          "type": "bytes10",
+          "description": "The first part of the data key of key type Mapping."
+        },
+        "bytes20Value": {
+          "type": "bytes20",
+          "description": "The second part of the data key of key type Mapping."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes32",
+          "description": "The generated `bytes32` data key of key type Mapping that map a `keyPrefix` to a specific `bytes20Value`."
+        }
+      },
+      "details": "Generate a data key of key type Mapping that map a 10 bytes `keyPrefix` to a `bytes20Value`. As:\n ```\n keyPrefix:bytes20Value\n ```"
+    },
+    "generateMappingWithGroupingKey(string,string,address)": {
+      "code": "function generateMappingWithGroupingKey(string firstWord, string secondWord, address addr) internal pure returns (bytes32)",
+      "inputs": {
+        "firstWord": {
+          "type": "string",
+          "description": "The word to retrieve the first 6 bytes of its hash."
+        },
+        "secondWord": {
+          "type": "string",
+          "description": "The word to retrieve the first 4 bytes of its hash."
+        },
+        "addr": {
+          "type": "address",
+          "description": "The address that makes the last part of the MappingWithGrouping."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes32",
+          "description": "The generated `bytes32` data key of key type MappingWithGrouping that map a `firstWord` to a `secondWord` to a specific address `addr`."
+        }
+      },
+      "details": "Generate a data key of key type MappingWithGrouping by using two strings `firstWord`\n mapped to a `secondWord` mapped itself to a specific address `addr`. As:\n ```\n bytes6(keccak256(\"firstWord\")):bytes4(keccak256(\"secondWord\")):0000:<address>\n ```"
+    },
+    "generateMappingWithGroupingKey(bytes6,bytes4,bytes20)": {
+      "code": "function generateMappingWithGroupingKey(bytes6 keyPrefix, bytes4 mapPrefix, bytes20 subMapKey) internal pure returns (bytes32)",
+      "inputs": {
+        "keyPrefix": {
+          "type": "bytes6",
+          "description": "The first part (6 bytes) of the data key of keyType MappingWithGrouping."
+        },
+        "mapPrefix": {
+          "type": "bytes4",
+          "description": "The second part (4 bytes) of the data key of keyType MappingWithGrouping."
+        },
+        "subMapKey": {
+          "type": "bytes20",
+          "description": "The last part (bytes20) of the data key of keyType MappingWithGrouping."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes32",
+          "description": "The generated `bytes32` data key of key type MappingWithGrouping that map a `keyPrefix` to a `mapPrefix` to a specific `subMapKey`."
+        }
+      },
+      "details": "Generate a data key of key type MappingWithGrouping that map a `keyPrefix` to an other `mapPrefix` to a specific `subMapKey`. As:\n ```\n keyPrefix:mapPrefix:0000:subMapKey\n ```"
+    },
+    "generateMappingWithGroupingKey(bytes10,bytes20)": {
+      "code": "function generateMappingWithGroupingKey(bytes10 keyPrefix, bytes20 bytes20Value) internal pure returns (bytes32)",
+      "inputs": {
+        "keyPrefix": {
+          "type": "bytes10",
+          "description": "The first part of the data key of keyType MappingWithGrouping."
+        },
+        "bytes20Value": {
+          "type": "bytes20",
+          "description": "The last of the data key of keyType MappingWithGrouping."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes32",
+          "description": "The generated `bytes32` data key of key type MappingWithGrouping that map a `keyPrefix`"
+        }
+      },
+      "details": "Generate a data key of key type MappingWithGrouping that map a 10 bytes `keyPrefix` to a specific `bytes20Value`. As:"
+    },
+    "generateJSONURLValue(string,string,string)": {
+      "code": "function generateJSONURLValue(string hashFunction, string json, string url) internal pure returns (bytes)",
+      "inputs": {
+        "hashFunction": {
+          "type": "string",
+          "description": "The function used to hash the JSON file."
+        },
+        "json": {
+          "type": "string",
+          "description": "Bytes value of the JSON file."
+        },
+        "url": {
+          "type": "string",
+          "description": "The URL where the JSON file is hosted."
+        }
+      },
+      "outputs": {},
+      "details": "Generate a JSONURL value content."
+    },
+    "generateASSETURLValue(string,string,string)": {
+      "code": "function generateASSETURLValue(string hashFunction, string assetBytes, string url) internal pure returns (bytes)",
+      "inputs": {
+        "hashFunction": {
+          "type": "string",
+          "description": "The function used to hash the JSON file."
+        },
+        "assetBytes": {
+          "type": "string",
+          "description": "Bytes value of the JSON file."
+        },
+        "url": {
+          "type": "string",
+          "description": "The URL where the JSON file is hosted."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes",
+          "description": "The encoded value as an `ASSETURL`."
+        }
+      },
+      "details": "Generate a ASSETURL value content."
+    },
+    "isCompactBytesArray(bytes)": {
+      "code": "function isCompactBytesArray(bytes compactBytesArray) internal pure returns (bool)",
+      "inputs": {
+        "compactBytesArray": {
+          "type": "bytes",
+          "description": "The bytes value to verify."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bool",
+          "description": "`true` if the `data` is correctly encoded CompactBytesArray, `false` otherwise."
+        }
+      },
+      "details": "Verify if `data` is a valid array of value encoded as a `CompactBytesArray` according to the LSP2 `CompactBytesArray` valueType specification."
+    },
+    "isValidLSP2ArrayLengthValue(bytes)": {
+      "code": "function isValidLSP2ArrayLengthValue(bytes arrayLength) internal pure returns (bool)",
+      "inputs": {
+        "arrayLength": {
+          "type": "bytes",
+          "description": "Plain bytes that should be validated."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bool",
+          "description": "`true` if the value is 16 bytes long, `false` otherwise."
+        }
+      },
+      "details": "Validates if the bytes `arrayLength` are exactly 16 bytes long, and are of the exact size of an LSP2 Array length value"
+    },
+    "removeLastElementFromArrayAndMap(bytes32,uint128,bytes32,bytes32)": {
+      "code": "function removeLastElementFromArrayAndMap(bytes32 arrayKey, uint128 newArrayLength, bytes32 removedElementIndexKey, bytes32 removedElementMapKey) internal pure returns (bytes32[] dataKeys, bytes[] dataValues)",
+      "inputs": {
+        "arrayKey": {
+          "type": "bytes32",
+          "description": "The Data Key of Key Type Array."
+        },
+        "newArrayLength": {
+          "type": "uint128",
+          "description": "The new Array Length for the `arrayKey`."
+        },
+        "removedElementIndexKey": {
+          "type": "bytes32",
+          "description": "The Data Key of Key Type Array Index for the removed element."
+        },
+        "removedElementMapKey": {
+          "type": "bytes32",
+          "description": "The Data Key of a mapping to be removed."
+        }
+      },
+      "outputs": {},
+      "details": "Generates Data Key/Value pairs for removing the last element from an LSP2 Array and a mapping Data Key."
+    },
+    "removeElementFromArrayAndMap(contract IERC725Y,bytes32,uint128,bytes32,uint128,bytes32)": {
+      "code": "function removeElementFromArrayAndMap(contract IERC725Y erc725YContract, bytes32 arrayKey, uint128 newArrayLength, bytes32 removedElementIndexKey, uint128 removedElementIndex, bytes32 removedElementMapKey) internal view returns (bytes32[] dataKeys, bytes[] dataValues)",
+      "inputs": {
+        "erc725YContract": {
+          "type": "contract IERC725Y",
+          "description": "The ERC725Y contract."
+        },
+        "arrayKey": {
+          "type": "bytes32",
+          "description": "The Data Key of Key Type Array."
+        },
+        "newArrayLength": {
+          "type": "uint128",
+          "description": "The new Array Length for the `arrayKey`."
+        },
+        "removedElementIndexKey": {
+          "type": "bytes32",
+          "description": "The Data Key of Key Type Array Index for the removed element."
+        },
+        "removedElementIndex": {
+          "type": "uint128",
+          "description": "the index of the removed element."
+        },
+        "removedElementMapKey": {
+          "type": "bytes32",
+          "description": "The Data Key of a mapping to be removed."
+        }
+      },
+      "outputs": {},
+      "details": "Generates Data Key/Value pairs for removing an element from an LSP2 Array and a mapping Data Key.",
+      "custom:info": "The function assumes that the Data Value stored under the mapping Data Key is of length 20 where the last 16 bytes are the index of the element in the array.\n "
+    }
+  },
+  "path": "@lukso/lsp-smart-contracts/contracts/LSP2ERC725YJSONSchema",
+  "title": "LSP2 Utility library.",
+  "details": "LSP2Utils is a library of utility functions that can be used to encode data key of different key type defined on the LSP2 standard. Based on LSP2 ERC725Y JSON Schema standard.",
+  "author": "Jean Cavallera <CJ42>, Yamen Merhi <YamenMerhi>, Daniel Afteni <B00ste>",
+  "name": "LSP2Utils"
+}

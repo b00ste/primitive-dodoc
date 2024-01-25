@@ -1,0 +1,29 @@
+{
+  "methods": {
+    "batchCalls(bytes[])": {
+      "stateMutability": "nonpayable",
+      "code": "function batchCalls(bytes[] data) external nonpayable returns (bytes[] results)",
+      "inputs": {
+        "data": {
+          "type": "bytes[]",
+          "description": "An array of ABI encoded function calls to be called on the contract."
+        }
+      },
+      "outputs": {
+        "results": {
+          "type": "bytes[]",
+          "description": "An array of abi-encoded data returned by the functions executed."
+        }
+      },
+      "notice": "Executing the following batch of abi-encoded function calls on the contract: `data`.",
+      "details": "Allows a caller to batch different function calls in one call. Perform a `delegatecall` on self, to call different functions with preserving the context."
+    }
+  },
+  "events": {},
+  "errors": {},
+  "internalMethods": {},
+  "path": "@lukso/lsp-smart-contracts/contracts/LSP0ERC725Account",
+  "title": "Interface of the [LSP-0-ERC725Account] standard, an account based smart contract that represents an identity on-chain.",
+  "author": "Fabian Vogelsteller <fabian@lukso.network>, Jean Cavallera (CJ42)",
+  "name": "ILSP0ERC725Account"
+}

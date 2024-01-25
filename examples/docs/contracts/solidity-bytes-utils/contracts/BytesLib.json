@@ -1,0 +1,79 @@
+{
+  "methods": {},
+  "events": {},
+  "errors": {},
+  "internalMethods": {
+    "concat(bytes,bytes)": {
+      "code": "function concat(bytes _preBytes, bytes _postBytes) internal pure returns (bytes)",
+      "inputs": {},
+      "outputs": {}
+    },
+    "concatStorage(bytes,bytes)": {
+      "code": "function concatStorage(bytes _preBytes, bytes _postBytes) internal nonpayable",
+      "inputs": {},
+      "outputs": {}
+    },
+    "slice(bytes,uint256,uint256)": {
+      "code": "function slice(bytes _bytes, uint256 _start, uint256 _length) internal pure returns (bytes)",
+      "inputs": {},
+      "outputs": {}
+    },
+    "toAddress(bytes,uint256)": {
+      "code": "function toAddress(bytes _bytes, uint256 _start) internal pure returns (address)",
+      "inputs": {},
+      "outputs": {}
+    },
+    "toUint8(bytes,uint256)": {
+      "code": "function toUint8(bytes _bytes, uint256 _start) internal pure returns (uint8)",
+      "inputs": {},
+      "outputs": {}
+    },
+    "toUint16(bytes,uint256)": {
+      "code": "function toUint16(bytes _bytes, uint256 _start) internal pure returns (uint16)",
+      "inputs": {},
+      "outputs": {}
+    },
+    "toUint32(bytes,uint256)": {
+      "code": "function toUint32(bytes _bytes, uint256 _start) internal pure returns (uint32)",
+      "inputs": {},
+      "outputs": {}
+    },
+    "toUint64(bytes,uint256)": {
+      "code": "function toUint64(bytes _bytes, uint256 _start) internal pure returns (uint64)",
+      "inputs": {},
+      "outputs": {}
+    },
+    "toUint96(bytes,uint256)": {
+      "code": "function toUint96(bytes _bytes, uint256 _start) internal pure returns (uint96)",
+      "inputs": {},
+      "outputs": {}
+    },
+    "toUint128(bytes,uint256)": {
+      "code": "function toUint128(bytes _bytes, uint256 _start) internal pure returns (uint128)",
+      "inputs": {},
+      "outputs": {}
+    },
+    "toUint256(bytes,uint256)": {
+      "code": "function toUint256(bytes _bytes, uint256 _start) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {}
+    },
+    "toBytes32(bytes,uint256)": {
+      "code": "function toBytes32(bytes _bytes, uint256 _start) internal pure returns (bytes32)",
+      "inputs": {},
+      "outputs": {}
+    },
+    "equal(bytes,bytes)": {
+      "code": "function equal(bytes _preBytes, bytes _postBytes) internal pure returns (bool)",
+      "inputs": {},
+      "outputs": {}
+    },
+    "equalStorage(bytes,bytes)": {
+      "code": "function equalStorage(bytes _preBytes, bytes _postBytes) internal view returns (bool)",
+      "inputs": {},
+      "outputs": {}
+    }
+  },
+  "path": "solidity-bytes-utils/contracts",
+  "name": "BytesLib"
+}

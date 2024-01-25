@@ -1,0 +1,95 @@
+{
+  "methods": {},
+  "events": {},
+  "errors": {},
+  "internalMethods": {
+    "max(uint256,uint256)": {
+      "code": "function max(uint256 a, uint256 b) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns the largest of two numbers."
+    },
+    "min(uint256,uint256)": {
+      "code": "function min(uint256 a, uint256 b) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns the smallest of two numbers."
+    },
+    "average(uint256,uint256)": {
+      "code": "function average(uint256 a, uint256 b) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns the average of two numbers. The result is rounded towards\n zero."
+    },
+    "ceilDiv(uint256,uint256)": {
+      "code": "function ceilDiv(uint256 a, uint256 b) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns the ceiling of the division of two numbers.\n This differs from standard division with `/` in that it rounds up instead\n of rounding down."
+    },
+    "mulDiv(uint256,uint256,uint256)": {
+      "code": "function mulDiv(uint256 x, uint256 y, uint256 denominator) internal pure returns (uint256 result)",
+      "inputs": {},
+      "outputs": {},
+      "notice": "Calculates floor(x * y / denominator) with full precision. Throws if result overflows a uint256 or denominator == 0",
+      "details": "Original credit to Remco Bloemen under MIT license (https://xn--2-umb.com/21/muldiv)\n with further edits by Uniswap Labs also under MIT license."
+    },
+    "mulDiv(uint256,uint256,uint256,enum Math.Rounding)": {
+      "code": "function mulDiv(uint256 x, uint256 y, uint256 denominator, enum Math.Rounding rounding) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {},
+      "notice": "Calculates x * y / denominator with full precision, following the selected rounding direction."
+    },
+    "sqrt(uint256)": {
+      "code": "function sqrt(uint256 a) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns the square root of a number. If the number is not a perfect square, the value is rounded down.\n Inspired by Henry S. Warren, Jr.'s \"Hacker's Delight\" (Chapter 11)."
+    },
+    "sqrt(uint256,enum Math.Rounding)": {
+      "code": "function sqrt(uint256 a, enum Math.Rounding rounding) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {},
+      "notice": "Calculates sqrt(a), following the selected rounding direction."
+    },
+    "log2(uint256)": {
+      "code": "function log2(uint256 value) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Return the log in base 2, rounded down, of a positive value.\n Returns 0 if given 0."
+    },
+    "log2(uint256,enum Math.Rounding)": {
+      "code": "function log2(uint256 value, enum Math.Rounding rounding) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Return the log in base 2, following the selected rounding direction, of a positive value.\n Returns 0 if given 0."
+    },
+    "log10(uint256)": {
+      "code": "function log10(uint256 value) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Return the log in base 10, rounded down, of a positive value.\n Returns 0 if given 0."
+    },
+    "log10(uint256,enum Math.Rounding)": {
+      "code": "function log10(uint256 value, enum Math.Rounding rounding) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Return the log in base 10, following the selected rounding direction, of a positive value.\n Returns 0 if given 0."
+    },
+    "log256(uint256)": {
+      "code": "function log256(uint256 value) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Return the log in base 256, rounded down, of a positive value.\n Returns 0 if given 0.\n Adding one to the result gives the number of pairs of hex symbols needed to represent `value` as a hex string."
+    },
+    "log256(uint256,enum Math.Rounding)": {
+      "code": "function log256(uint256 value, enum Math.Rounding rounding) internal pure returns (uint256)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Return the log in base 256, following the selected rounding direction, of a positive value.\n Returns 0 if given 0."
+    }
+  },
+  "path": "@openzeppelin/contracts/utils/math",
+  "details": "Standard math utilities missing in the Solidity language.",
+  "name": "Math"
+}

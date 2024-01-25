@@ -1,0 +1,28 @@
+{
+  "methods": {},
+  "events": {},
+  "errors": {},
+  "internalMethods": {
+    "deploy(uint256,bytes32,bytes)": {
+      "code": "function deploy(uint256 amount, bytes32 salt, bytes bytecode) internal nonpayable returns (address addr)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Deploys a contract using `CREATE2`. The address where the contract\n will be deployed can be known in advance via {computeAddress}.\n The bytecode for a contract can be obtained from Solidity with\n `type(contractName).creationCode`.\n Requirements:\n - `bytecode` must not be empty.\n - `salt` must have not been used for `bytecode` already.\n - the factory must have a balance of at least `amount`.\n - if `amount` is non-zero, `bytecode` must have a `payable` constructor."
+    },
+    "computeAddress(bytes32,bytes32)": {
+      "code": "function computeAddress(bytes32 salt, bytes32 bytecodeHash) internal view returns (address)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns the address where a contract will be stored if deployed via {deploy}. Any change in the\n `bytecodeHash` or `salt` will result in a new destination address."
+    },
+    "computeAddress(bytes32,bytes32,address)": {
+      "code": "function computeAddress(bytes32 salt, bytes32 bytecodeHash, address deployer) internal pure returns (address addr)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns the address where a contract will be stored if deployed via {deploy} from a contract located at\n `deployer`. If `deployer` is this contract's address, returns the same value as {computeAddress}."
+    }
+  },
+  "path": "@openzeppelin/contracts/utils",
+  "details": "Helper to make usage of the `CREATE2` EVM opcode easier and safer. `CREATE2` can be used to compute in advance the address where a smart contract will be deployed, which allows for interesting new mechanisms known as 'counterfactual interactions'. See the https://eips.ethereum.org/EIPS/eip-1014#motivation[EIP] for more information.",
+  "name": "Create2"
+}

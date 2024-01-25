@@ -1,0 +1,141 @@
+{
+  "methods": {
+    "execute(uint256,address,uint256,bytes)": {
+      "stateMutability": "payable",
+      "code": "function execute(uint256 operationType, address target, uint256 value, bytes data) external payable returns (bytes)",
+      "inputs": {
+        "operationType": {
+          "type": "uint256",
+          "description": "The operation type used: CALL = 0; CREATE = 1; CREATE2 = 2; STATICCALL = 3; DELEGATECALL = 4"
+        },
+        "target": {
+          "type": "address",
+          "description": "The address of the EOA or smart contract.  (unused if a contract is created via operation type 1 or 2)"
+        },
+        "value": {
+          "type": "uint256",
+          "description": "The amount of native tokens to transfer (in Wei)"
+        },
+        "data": {
+          "type": "bytes",
+          "description": "The call data, or the creation bytecode of the contract to deploy if `operationType` is `1` or `2`."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes"
+        }
+      },
+      "notice": "Calling address `target` using `operationType`, transferring `value` wei and data: `data`.",
+      "details": "Generic executor function to: - send native tokens to any address. - interact with any contract by passing an abi-encoded function call in the `data` parameter. - deploy a contract by providing its creation bytecode in the `data` parameter.",
+      "custom:warning": "Be aware that `msg.value` is persisting between the caller and the callee when using `DELEGATECALL` (`4`) as `operationType`."
+    },
+    "executeBatch(uint256[],address[],uint256[],bytes[])": {
+      "stateMutability": "payable",
+      "code": "function executeBatch(uint256[] operationsType, address[] targets, uint256[] values, bytes[] datas) external payable returns (bytes[])",
+      "inputs": {
+        "operationsType": {
+          "type": "uint256[]",
+          "description": "The list of operations type used: `CALL = 0`; `CREATE = 1`; `CREATE2 = 2`; `STATICCALL = 3`; `DELEGATECALL = 4`"
+        },
+        "targets": {
+          "type": "address[]",
+          "description": "The list of addresses to call. `targets` will be unused if a contract is created (operation types 1 and 2)."
+        },
+        "values": {
+          "type": "uint256[]",
+          "description": "The list of native token amounts to transfer (in Wei)."
+        },
+        "datas": {
+          "type": "bytes[]",
+          "description": "The list of calldata, or the creation bytecode of the contract to deploy if `operationType` is `1` or `2`."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes[]"
+        }
+      },
+      "notice": "Calling multiple addresses `targets` using `operationsType`, transferring `values` wei and data: `datas`.",
+      "details": "Batch executor function that behaves the same as {execute} but allowing multiple operations in the same transaction.",
+      "custom:warning": "The `msg.value` should not be trusted for any method called with the batch with `operationType`: `DELEGATECALL` (4)."
+    },
+    "supportsInterface(bytes4)": {
+      "stateMutability": "view",
+      "code": "function supportsInterface(bytes4 interfaceId) external view returns (bool)",
+      "inputs": {
+        "interfaceId": {
+          "type": "bytes4"
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bool"
+        }
+      },
+      "details": "Returns true if this contract implements the interface defined by `interfaceId`. See the corresponding https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section] to learn more about how these ids are created. This function call must use less than 30 000 gas."
+    }
+  },
+  "events": {
+    "ContractCreated(uint256,address,uint256,bytes32)": {
+      "code": "event ContractCreated(uint256 indexed operationType, address indexed contractAddress, uint256 value, bytes32 indexed salt)",
+      "inputs": {
+        "operationType": {
+          "type": "uint256",
+          "indexed": true,
+          "description": "The opcode used to deploy the contract (`CREATE` or `CREATE2`)."
+        },
+        "contractAddress": {
+          "type": "address",
+          "indexed": true,
+          "description": "The created contract address."
+        },
+        "value": {
+          "type": "uint256",
+          "indexed": false,
+          "description": "The amount of native tokens (in Wei) sent to fund the created contract on deployment."
+        },
+        "salt": {
+          "type": "bytes32",
+          "indexed": true,
+          "description": "The salt used to deterministically deploy the contract (`CREATE2` only). If `CREATE` opcode is used, the salt value will be `bytes32(0)`."
+        }
+      },
+      "notice": "Deployed new contract at address `contractAddress` and funded with `value` wei (deployed using opcode: `operationType`).",
+      "details": "Emitted when a new contract was created and deployed."
+    },
+    "Executed(uint256,address,uint256,bytes4)": {
+      "code": "event Executed(uint256 indexed operationType, address indexed target, uint256 value, bytes4 indexed selector)",
+      "inputs": {
+        "operationType": {
+          "type": "uint256",
+          "indexed": true,
+          "description": "The low-level call opcode used to call the `target` address (`CALL`, `STATICALL` or `DELEGATECALL`)."
+        },
+        "target": {
+          "type": "address",
+          "indexed": true,
+          "description": "The address to call. `target` will be unused if a contract is created (operation types 1 and 2)."
+        },
+        "value": {
+          "type": "uint256",
+          "indexed": false,
+          "description": "The amount of native tokens transferred along the call (in Wei)."
+        },
+        "selector": {
+          "type": "bytes4",
+          "indexed": true,
+          "description": "The first 4 bytes (= function selector) of the data sent with the call."
+        }
+      },
+      "notice": "Called address `target` using `operationType` with `value` wei and `data`.",
+      "details": "Emitted when calling an address `target` (EOA or contract) with `value`."
+    }
+  },
+  "errors": {},
+  "internalMethods": {},
+  "path": "@erc725/smart-contracts/contracts/interfaces",
+  "title": "The interface for the ERC725X sub-standard, a generic executor.",
+  "details": "ERC725X provides the ability to call arbitrary functions on any other smart contract (including itself). It allows to use different type of message calls to interact with addresses such as `call`, `staticcall` and `delegatecall`. It also allows to deploy and create new contracts via both the `create` and `create2` opcodes. This is the basis for a smart contract based account system, but could also be used as a proxy account system.",
+  "name": "IERC725X"
+}

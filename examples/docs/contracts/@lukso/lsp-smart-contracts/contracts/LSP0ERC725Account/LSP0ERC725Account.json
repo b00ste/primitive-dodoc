@@ -1,0 +1,871 @@
+{
+  "methods": {
+    "constructor": {
+      "stateMutability": "payable",
+      "code": "constructor(address initialOwner)",
+      "inputs": {
+        "initialOwner": {
+          "type": "address",
+          "description": "The owner of the contract."
+        }
+      },
+      "outputs": {},
+      "notice": "Deploying a LSP0ERC725Account contract with owner set to address `initialOwner`.",
+      "details": "Set `initialOwner` as the contract owner. - The `constructor` also allows funding the contract on deployment. - The `initialOwner` will then be allowed to call protected functions marked with the `onlyOwner` modifier.",
+      "custom:events": "- {UniversalReceiver} event when funding the contract on deployment. - {OwnershipTransferred} event when `initialOwner` is set as the contract {owner}."
+    },
+    "fallback()": {
+      "stateMutability": "payable",
+      "code": "fallback(bytes calldata callData) external payable returns (bytes memory)",
+      "inputs": {},
+      "outputs": {},
+      "notice": "The `fallback` function was called with the following amount of native tokens: `msg.value`; and the following calldata: `callData`.",
+      "details": "Achieves the goal of [LSP-17-ContractExtension] standard by extending the contract to handle calls of functions that do not exist natively,\n forwarding the function call to the extension address mapped to the function being called.\n This function is executed when:\n    - Sending data of length less than 4 bytes to the contract.\n    - The first 4 bytes of the calldata do not match any publicly callable functions from the contract ABI.\n    - Receiving native tokens with some calldata.\n 1. If the data is equal or longer than 4 bytes, the [ERC-725Y] storage is queried with the following data key: [_LSP17_EXTENSION_PREFIX] + `bytes4(msg.sig)` (Check [LSP-2-ERC725YJSONSchema] for encoding the data key)\n   - If there is no address stored under the following data key, revert with {NoExtensionFoundForFunctionSelector(bytes4)}. The data key relative to `bytes4(0)` is an exception, where no reverts occurs if there is no extension address stored under. This exception is made to allow users to send random data (graffiti) to the account and to be able to react on it.\n   - If there is an address, forward the `msg.data` to the extension using the CALL opcode, appending 52 bytes (20 bytes of `msg.sender` and 32 bytes of `msg.value`). Return what the calls returns, or revert if the call failed.\n 2. If the data sent to this function is of length less than 4 bytes (not a function selector), return.",
+      "custom:info": "Whenever the call is associated with native tokens, the function will delegate the handling of native tokens internally to the {universalReceiver} function\n passing `_TYPEID_LSP0_VALUE_RECEIVED` as typeId and the calldata as received data, except when the native token will be sent directly to the extension.\n ",
+      "custom:events": "{UniversalReceiver} event when receiving native tokens and extension function selector is not found or not payable."
+    },
+    "RENOUNCE_OWNERSHIP_CONFIRMATION_DELAY()": {
+      "stateMutability": "view",
+      "code": "function RENOUNCE_OWNERSHIP_CONFIRMATION_DELAY() external view returns (uint256)",
+      "inputs": {},
+      "outputs": {
+        "_0": {
+          "type": "uint256"
+        }
+      }
+    },
+    "RENOUNCE_OWNERSHIP_CONFIRMATION_PERIOD()": {
+      "stateMutability": "view",
+      "code": "function RENOUNCE_OWNERSHIP_CONFIRMATION_PERIOD() external view returns (uint256)",
+      "inputs": {},
+      "outputs": {
+        "_0": {
+          "type": "uint256"
+        }
+      }
+    },
+    "VERSION()": {
+      "stateMutability": "view",
+      "code": "function VERSION() external view returns (string)",
+      "inputs": {},
+      "outputs": {
+        "_0": {
+          "type": "string"
+        }
+      },
+      "notice": "Contract version."
+    },
+    "acceptOwnership()": {
+      "stateMutability": "nonpayable",
+      "code": "function acceptOwnership() external nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "notice": "`msg.sender` is accepting ownership of contract: `address(this)`.",
+      "details": "Transfer ownership of the contract from the current {owner()} to the {pendingOwner()}. Once this function is called: - The current {owner()} will lose access to the functions restricted to the {owner()} only. - The {pendingOwner()} will gain access to the functions restricted to the {owner()} only.",
+      "custom:requirements": "- Only the {pendingOwner} can call this function. - When notifying the previous owner via LSP1, the typeId used must be the `keccak256(...)` hash of [LSP0OwnershipTransferred_SenderNotification]. - When notifying the new owner via LSP1, the typeId used must be the `keccak256(...)` hash of [LSP0OwnershipTransferred_RecipientNotification]."
+    },
+    "batchCalls(bytes[])": {
+      "stateMutability": "nonpayable",
+      "code": "function batchCalls(bytes[] data) external nonpayable returns (bytes[] results)",
+      "inputs": {
+        "data": {
+          "type": "bytes[]",
+          "description": "An array of ABI encoded function calls to be called on the contract."
+        }
+      },
+      "outputs": {
+        "results": {
+          "type": "bytes[]",
+          "description": "An array of abi-encoded data returned by the functions executed."
+        }
+      },
+      "notice": "Executing the following batch of abi-encoded function calls on the contract: `data`.",
+      "details": "Allows a caller to batch different function calls in one call. Perform a `delegatecall` on self, to call different functions with preserving the context.",
+      "custom:info": "It's not possible to send value along the functions call due to the use of `delegatecall`."
+    },
+    "execute(uint256,address,uint256,bytes)": {
+      "stateMutability": "payable",
+      "code": "function execute(uint256 operationType, address target, uint256 value, bytes data) external payable returns (bytes)",
+      "inputs": {
+        "operationType": {
+          "type": "uint256",
+          "description": "The operation type used: CALL = 0; CREATE = 1; CREATE2 = 2; STATICCALL = 3; DELEGATECALL = 4"
+        },
+        "target": {
+          "type": "address",
+          "description": "The address of the EOA or smart contract.  (unused if a contract is created via operation type 1 or 2)"
+        },
+        "value": {
+          "type": "uint256",
+          "description": "The amount of native tokens to transfer (in Wei)"
+        },
+        "data": {
+          "type": "bytes",
+          "description": "The call data, or the creation bytecode of the contract to deploy if `operationType` is `1` or `2`."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes"
+        }
+      },
+      "notice": "Calling address `target` using `operationType`, transferring `value` wei and data: `data`.",
+      "details": "Generic executor function to: - send native tokens to any address. - interact with any contract by passing an abi-encoded function call in the `data` parameter. - deploy a contract by providing its creation bytecode in the `data` parameter.",
+      "custom:events": "- {Executed} event for each call that uses under `operationType`: `CALL` (0), `STATICCALL` (3) and `DELEGATECALL` (4). - {ContractCreated} event, when a contract is created under `operationType`: `CREATE` (1) and `CREATE2` (2). - {UniversalReceiver} event when receiving native tokens.",
+      "custom:requirements": "- Can be only called by the {owner} or by an authorised address that pass the verification check performed on the owner. - If a `value` is provided, the contract must have at least this amount in its balance to execute successfully. - If the operation type is `CREATE` (1) or `CREATE2` (2), `target` must be `address(0)`. - If the operation type is `STATICCALL` (3) or `DELEGATECALL` (4), `value` transfer is disallowed and must be 0."
+    },
+    "executeBatch(uint256[],address[],uint256[],bytes[])": {
+      "stateMutability": "payable",
+      "code": "function executeBatch(uint256[] operationsType, address[] targets, uint256[] values, bytes[] datas) external payable returns (bytes[])",
+      "inputs": {
+        "operationsType": {
+          "type": "uint256[]",
+          "description": "The list of operations type used: `CALL = 0`; `CREATE = 1`; `CREATE2 = 2`; `STATICCALL = 3`; `DELEGATECALL = 4`"
+        },
+        "targets": {
+          "type": "address[]",
+          "description": "The list of addresses to call. `targets` will be unused if a contract is created (operation types 1 and 2)."
+        },
+        "values": {
+          "type": "uint256[]",
+          "description": "The list of native token amounts to transfer (in Wei)."
+        },
+        "datas": {
+          "type": "bytes[]",
+          "description": "The list of calldata, or the creation bytecode of the contract to deploy if `operationType` is `1` or `2`."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes[]"
+        }
+      },
+      "notice": "Calling multiple addresses `targets` using `operationsType`, transferring `values` wei and data: `datas`.",
+      "details": "Batch executor function that behaves the same as {execute} but allowing multiple operations in the same transaction.",
+      "custom:events": "- {Executed} event for each call that uses under `operationType`: `CALL` (0), `STATICCALL` (3) and `DELEGATECALL` (4). (each iteration) - {ContractCreated} event, when a contract is created under `operationType`: `CREATE` (1) and `CREATE2` (2) (each iteration) - {UniversalReceiver} event when receiving native tokens.",
+      "custom:requirements": "- The length of the parameters provided must be equal. - Can be only called by the {owner} or by an authorised address that pass the verification check performed on the owner. - If a `value` is provided, the contract must have at least this amount in its balance to execute successfully. - If the operation type is `CREATE` (1) or `CREATE2` (2), `target` must be `address(0)`. - If the operation type is `STATICCALL` (3) or `DELEGATECALL` (4), `value` transfer is disallowed and must be 0.",
+      "custom:warning": "- The `msg.value` should not be trusted for any method called within the batch with `operationType`: `DELEGATECALL` (4)."
+    },
+    "getData(bytes32)": {
+      "stateMutability": "view",
+      "code": "function getData(bytes32 dataKey) external view returns (bytes dataValue)",
+      "inputs": {
+        "dataKey": {
+          "type": "bytes32",
+          "description": "The data key for which to retrieve the value."
+        }
+      },
+      "outputs": {
+        "dataValue": {
+          "type": "bytes",
+          "description": "The bytes value stored under the specified data key."
+        }
+      },
+      "notice": "Reading the ERC725Y storage for data key `dataKey` returned the following value: `dataValue`.",
+      "details": "Get in the ERC725Y storage the bytes data stored at a specific data key `dataKey`."
+    },
+    "getDataBatch(bytes32[])": {
+      "stateMutability": "view",
+      "code": "function getDataBatch(bytes32[] dataKeys) external view returns (bytes[] dataValues)",
+      "inputs": {
+        "dataKeys": {
+          "type": "bytes32[]",
+          "description": "The array of keys which values to retrieve"
+        }
+      },
+      "outputs": {
+        "dataValues": {
+          "type": "bytes[]",
+          "description": "The array of data stored at multiple keys"
+        }
+      },
+      "notice": "Reading the ERC725Y storage for data keys `dataKeys` returned the following values: `dataValues`.",
+      "details": "Get in the ERC725Y storage the bytes data stored at multiple data keys `dataKeys`."
+    },
+    "isValidSignature(bytes32,bytes)": {
+      "stateMutability": "view",
+      "code": "function isValidSignature(bytes32 dataHash, bytes signature) external view returns (bytes4 returnedStatus)",
+      "inputs": {
+        "dataHash": {
+          "type": "bytes32",
+          "description": "The hash of the data to be validated."
+        },
+        "signature": {
+          "type": "bytes",
+          "description": "A signature that can validate the previous parameter (Hash)."
+        }
+      },
+      "outputs": {
+        "returnedStatus": {
+          "type": "bytes4",
+          "description": "A `bytes4` value that indicates if the signature is valid or not."
+        }
+      },
+      "notice": "Achieves the goal of [EIP-1271] by validating signatures of smart contracts according to their own logic.",
+      "details": "Handles two cases: 1. If the owner is an EOA, recovers an address from the hash and the signature provided:      - Returns the `_ERC1271_SUCCESSVALUE` if the address recovered is the same as the owner, indicating that it was a valid signature.      - If the address is different, it returns the `_ERC1271_FAILVALUE` indicating that the signature is not valid. 2. If the owner is a smart contract, it forwards the call of {isValidSignature()} to the owner contract:      - If the contract fails or returns the `_ERC1271_FAILVALUE`, the {isValidSignature()} on the account returns the `_ERC1271_FAILVALUE`, indicating that the signature is not valid.      - If the {isValidSignature()} on the owner returned the `_ERC1271_SUCCESSVALUE`, the {isValidSignature()} on the account returns the `_ERC1271_SUCCESSVALUE`, indicating that it's a valid signature.",
+      "custom:warning": "This function does not enforce by default the inclusion of the address of this contract in the signature digest. It is recommended that protocols or applications using this contract include the targeted address (= this contract) in the data to sign. To ensure that a signature is valid for a specific LSP0ERC725Account and prevent signatures from the same EOA to be replayed across different LSP0ERC725Accounts."
+    },
+    "owner()": {
+      "stateMutability": "view",
+      "code": "function owner() external view returns (address)",
+      "inputs": {},
+      "outputs": {
+        "_0": {
+          "type": "address"
+        }
+      },
+      "details": "Returns the address of the current owner."
+    },
+    "pendingOwner()": {
+      "stateMutability": "view",
+      "code": "function pendingOwner() external view returns (address)",
+      "inputs": {},
+      "outputs": {
+        "_0": {
+          "type": "address"
+        }
+      },
+      "details": "The address that ownership of the contract is transferred to. This address may use {acceptOwnership()} to gain ownership of the contract.",
+      "custom:info": "If no ownership transfer is in progress, the pendingOwner will be `address(0).`."
+    },
+    "renounceOwnership()": {
+      "stateMutability": "nonpayable",
+      "code": "function renounceOwnership() external nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "notice": "`msg.sender` is renouncing ownership of contract `address(this)`.",
+      "details": "Renounce ownership of the contract in a 2-step process. 1. The first call will initiate the process of renouncing ownership. 2. The second call is used as a confirmation and will leave the contract without an owner.",
+      "custom:danger": "Leaves the contract without an owner. Once ownership of the contract has been renounced, any functions that are restricted to be called by the owner or an address allowed by the owner will be permanently inaccessible, making these functions not callable anymore and unusable.",
+      "custom:requirements": "Can be only called by the {owner} or by an authorised address that pass the verification check performed on the owner."
+    },
+    "setData(bytes32,bytes)": {
+      "stateMutability": "payable",
+      "code": "function setData(bytes32 dataKey, bytes dataValue) external payable",
+      "inputs": {
+        "dataKey": {
+          "type": "bytes32",
+          "description": "The data key for which to set a new value."
+        },
+        "dataValue": {
+          "type": "bytes",
+          "description": "The new bytes value to set."
+        }
+      },
+      "outputs": {},
+      "notice": "Setting the following data key value pair in the ERC725Y storage. Data key: `dataKey`, data value: `dataValue`.",
+      "details": "Sets a single bytes value `dataValue` in the ERC725Y storage for a specific data key `dataKey`. The function is marked as payable to enable flexibility on child contracts. For instance to implement a fee mechanism for setting specific data.",
+      "custom:events": "- {UniversalReceiver} event when receiving native tokens. - {DataChanged} event.",
+      "custom:requirements": "Can be only called by the {owner} or by an authorised address that pass the verification check performed on the owner."
+    },
+    "setDataBatch(bytes32[],bytes[])": {
+      "stateMutability": "payable",
+      "code": "function setDataBatch(bytes32[] dataKeys, bytes[] dataValues) external payable",
+      "inputs": {
+        "dataKeys": {
+          "type": "bytes32[]",
+          "description": "An array of data keys to set bytes values for."
+        },
+        "dataValues": {
+          "type": "bytes[]",
+          "description": "An array of bytes values to set for each `dataKeys`."
+        }
+      },
+      "outputs": {},
+      "notice": "Setting the following data key value pairs in the ERC725Y storage. Data keys: `dataKeys`, data values: `dataValues`.",
+      "details": "Batch data setting function that behaves the same as {setData} but allowing to set multiple data key/value pairs in the ERC725Y storage in the same transaction.",
+      "custom:events": "- {UniversalReceiver} event when receiving native tokens. - {DataChanged} event. (on each iteration of setting data)",
+      "custom:requirements": "Can be only called by the {owner} or by an authorised address that pass the verification check performed on the owner."
+    },
+    "supportsInterface(bytes4)": {
+      "stateMutability": "view",
+      "code": "function supportsInterface(bytes4 interfaceId) external view returns (bool)",
+      "inputs": {
+        "interfaceId": {
+          "type": "bytes4",
+          "description": "The interface ID to check if the contract supports it."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bool",
+          "description": "`true` if this contract implements the interface defined by `interfaceId`, `false` otherwise."
+        }
+      },
+      "notice": "Checking if this contract supports the interface defined by the `bytes4` interface ID `interfaceId`.",
+      "details": "Achieves the goal of [ERC-165] to detect supported interfaces and [LSP-17-ContractExtension] by checking if the interfaceId being queried is supported on another linked extension. If the contract doesn't support the `interfaceId`, it forwards the call to the `supportsInterface` extension according to [LSP-17-ContractExtension], and checks if the extension implements the interface defined by `interfaceId`."
+    },
+    "transferOwnership(address)": {
+      "stateMutability": "nonpayable",
+      "code": "function transferOwnership(address pendingNewOwner) external nonpayable",
+      "inputs": {
+        "pendingNewOwner": {
+          "type": "address"
+        }
+      },
+      "outputs": {},
+      "notice": "Transfer ownership initiated by `newOwner`.",
+      "details": "Initiate the process of transferring ownership of the contract by setting the new owner as the pending owner. If the new owner is a contract that supports + implements LSP1, this will also attempt to notify the new owner that ownership has been transferred to them by calling the {universalReceiver()} function on the `newOwner` contract.",
+      "custom:requirements": "- Can be only called by the {owner} or by an authorised address that pass the verification check performed on the owner. - When notifying the new owner via LSP1, the `typeId` used must be the `keccak256(...)` hash of [LSP0OwnershipTransferStarted]. - Pending owner cannot accept ownership in the same tx via the LSP1 hook."
+    },
+    "universalReceiver(bytes32,bytes)": {
+      "stateMutability": "payable",
+      "code": "function universalReceiver(bytes32 typeId, bytes receivedData) external payable returns (bytes returnedValues)",
+      "inputs": {
+        "typeId": {
+          "type": "bytes32",
+          "description": "The type of call received."
+        },
+        "receivedData": {
+          "type": "bytes",
+          "description": "The data received."
+        }
+      },
+      "outputs": {
+        "returnedValues": {
+          "type": "bytes",
+          "description": "The ABI encoded return value of the LSP1UniversalReceiverDelegate call and the LSP1TypeIdDelegate call."
+        }
+      },
+      "notice": "Notifying the contract by calling its `universalReceiver` function with the following informations: typeId: `typeId`; data: `data`.",
+      "details": "Achieves the goal of [LSP-1-UniversalReceiver] by allowing the account to be notified about incoming/outgoing transactions and enabling reactions to these actions. The reaction is achieved by having two external contracts ([LSP1UniversalReceiverDelegate]) that react on the whole transaction and on the specific typeId, respectively. The function performs the following steps: 1. Query the [ERC-725Y] storage with the data key [_LSP1_UNIVERSAL_RECEIVER_DELEGATE_KEY].      - If there is an address stored under the data key, check if this address supports the LSP1 interfaceId.      - If yes, call this address with the typeId and data (params), along with additional calldata consisting of 20 bytes of `msg.sender` and 32 bytes of `msg.value`. If not, continue the execution of the function. 2. Query the [ERC-725Y] storage with the data key [_LSP1_UNIVERSAL_RECEIVER_DELEGATE_PREFIX] + `bytes32(typeId)`.   (Check [LSP-2-ERC725YJSONSchema] for encoding the data key)      - If there is an address stored under the data key, check if this address supports the LSP1 interfaceId.      - If yes, call this address with the typeId and data (params), along with additional calldata consisting of 20 bytes of `msg.sender` and 32 bytes of `msg.value`. If not, continue the execution of the function. This function delegates internally the handling of native tokens to the {universalReceiver} function itself passing `_TYPEID_LSP0_VALUE_RECEIVED` as typeId and the calldata as received data.",
+      "custom:events": "- {UniversalReceiver} when receiving native tokens. - {UniversalReceiver} event with the function parameters, call options, and the response of the UniversalReceiverDelegates (URD) contract that was called."
+    },
+    "receive()": {
+      "stateMutability": "payable",
+      "code": "receive() external payable",
+      "inputs": {},
+      "outputs": {},
+      "details": "Executed:\n - When receiving some native tokens without any additional data.\n - On empty calls to the contract.",
+      "custom:info": "This function internally delegates the handling of native tokens to the {universalReceiver} function\n passing `_TYPEID_LSP0_VALUE_RECEIVED` as typeId and an empty bytes array as received data.\n ",
+      "custom:events": "Emits a {UniversalReceiver} event when the `universalReceiver` logic is executed upon receiving native tokens."
+    }
+  },
+  "events": {
+    "ContractCreated(uint256,address,uint256,bytes32)": {
+      "code": "event ContractCreated(uint256 indexed operationType, address indexed contractAddress, uint256 value, bytes32 indexed salt)",
+      "inputs": {
+        "operationType": {
+          "type": "uint256",
+          "indexed": true,
+          "description": "The opcode used to deploy the contract (`CREATE` or `CREATE2`)."
+        },
+        "contractAddress": {
+          "type": "address",
+          "indexed": true,
+          "description": "The created contract address."
+        },
+        "value": {
+          "type": "uint256",
+          "indexed": false,
+          "description": "The amount of native tokens (in Wei) sent to fund the created contract on deployment."
+        },
+        "salt": {
+          "type": "bytes32",
+          "indexed": true,
+          "description": "The salt used to deterministically deploy the contract (`CREATE2` only). If `CREATE` opcode is used, the salt value will be `bytes32(0)`."
+        }
+      },
+      "notice": "Deployed new contract at address `contractAddress` and funded with `value` wei (deployed using opcode: `operationType`).",
+      "details": "Emitted when a new contract was created and deployed."
+    },
+    "DataChanged(bytes32,bytes)": {
+      "code": "event DataChanged(bytes32 indexed dataKey, bytes dataValue)",
+      "inputs": {
+        "dataKey": {
+          "type": "bytes32",
+          "indexed": true,
+          "description": "The data key for which a bytes value is set."
+        },
+        "dataValue": {
+          "type": "bytes",
+          "indexed": false,
+          "description": "The value to set for the given data key."
+        }
+      },
+      "notice": "The following data key/value pair has been changed in the ERC725Y storage: Data key: `dataKey`, data value: `dataValue`.",
+      "details": "Emitted when data at a specific `dataKey` was changed to a new value `dataValue`."
+    },
+    "Executed(uint256,address,uint256,bytes4)": {
+      "code": "event Executed(uint256 indexed operationType, address indexed target, uint256 value, bytes4 indexed selector)",
+      "inputs": {
+        "operationType": {
+          "type": "uint256",
+          "indexed": true,
+          "description": "The low-level call opcode used to call the `target` address (`CALL`, `STATICALL` or `DELEGATECALL`)."
+        },
+        "target": {
+          "type": "address",
+          "indexed": true,
+          "description": "The address to call. `target` will be unused if a contract is created (operation types 1 and 2)."
+        },
+        "value": {
+          "type": "uint256",
+          "indexed": false,
+          "description": "The amount of native tokens transferred along the call (in Wei)."
+        },
+        "selector": {
+          "type": "bytes4",
+          "indexed": true,
+          "description": "The first 4 bytes (= function selector) of the data sent with the call."
+        }
+      },
+      "notice": "Called address `target` using `operationType` with `value` wei and `data`.",
+      "details": "Emitted when calling an address `target` (EOA or contract) with `value`."
+    },
+    "OwnershipRenounced()": {
+      "code": "event OwnershipRenounced()",
+      "inputs": {},
+      "notice": "Successfully renounced ownership of the contract. This contract is now owned by anyone, it's owner is `address(0)`.",
+      "details": "Emitted when the ownership of the contract has been renounced."
+    },
+    "OwnershipTransferStarted(address,address)": {
+      "code": "event OwnershipTransferStarted(address indexed previousOwner, address indexed newOwner)",
+      "inputs": {
+        "previousOwner": {
+          "type": "address",
+          "indexed": true,
+          "description": "The address of the previous owner."
+        },
+        "newOwner": {
+          "type": "address",
+          "indexed": true,
+          "description": "The address of the new owner."
+        }
+      },
+      "notice": "The transfer of ownership of the contract was initiated. Pending new owner set to: `newOwner`.",
+      "details": "Emitted when {transferOwnership(..)} was called and the first step of transferring ownership completed successfully which leads to {pendingOwner} being updated."
+    },
+    "OwnershipTransferred(address,address)": {
+      "code": "event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)",
+      "inputs": {
+        "previousOwner": {
+          "type": "address",
+          "indexed": true
+        },
+        "newOwner": {
+          "type": "address",
+          "indexed": true
+        }
+      }
+    },
+    "RenounceOwnershipStarted()": {
+      "code": "event RenounceOwnershipStarted()",
+      "inputs": {},
+      "notice": "Ownership renouncement initiated.",
+      "details": "Emitted when starting the {renounceOwnership(..)} 2-step process."
+    },
+    "UniversalReceiver(address,uint256,bytes32,bytes,bytes)": {
+      "code": "event UniversalReceiver(address indexed from, uint256 indexed value, bytes32 indexed typeId, bytes receivedData, bytes returnedValue)",
+      "inputs": {
+        "from": {
+          "type": "address",
+          "indexed": true,
+          "description": "The address of the EOA or smart contract that called the {universalReceiver(...)} function."
+        },
+        "value": {
+          "type": "uint256",
+          "indexed": true,
+          "description": "The amount sent to the {universalReceiver(...)} function."
+        },
+        "typeId": {
+          "type": "bytes32",
+          "indexed": true,
+          "description": "A `bytes32` unique identifier (= _\"hook\"_)that describe the type of notification, information or transaction received by the contract. Can be related to a specific standard or a hook."
+        },
+        "receivedData": {
+          "type": "bytes",
+          "indexed": false,
+          "description": "Any arbitrary data that was sent to the {universalReceiver(...)} function."
+        },
+        "returnedValue": {
+          "type": "bytes",
+          "indexed": false,
+          "description": "The value returned by the {universalReceiver(...)} function."
+        }
+      },
+      "notice": "Address `from` called the `universalReceiver(...)` function while sending `value` LYX. Notification type (typeId): `typeId` - Data received: `receivedData`.",
+      "details": "Emitted when the {universalReceiver} function was called with a specific `typeId` and some `receivedData`"
+    }
+  },
+  "errors": {
+    "ERC725X_ContractDeploymentFailed()": {
+      "code": "error ERC725X_ContractDeploymentFailed()",
+      "inputs": {},
+      "details": "Reverts when contract deployment failed via {execute} or {executeBatch} functions, This error can occur using either operation type 1 (`CREATE`) or 2 (`CREATE2`)."
+    },
+    "ERC725X_CreateOperationsRequireEmptyRecipientAddress()": {
+      "code": "error ERC725X_CreateOperationsRequireEmptyRecipientAddress()",
+      "inputs": {},
+      "details": "Reverts when passing a `to` address that is not `address(0)` (= address zero) while deploying a contract via {execute} or {executeBatch} functions. This error can occur using either operation type 1 (`CREATE`) or 2 (`CREATE2`)."
+    },
+    "ERC725X_ExecuteParametersEmptyArray()": {
+      "code": "error ERC725X_ExecuteParametersEmptyArray()",
+      "inputs": {},
+      "details": "Reverts when one of the array parameter provided to the {executeBatch} function is an empty array."
+    },
+    "ERC725X_ExecuteParametersLengthMismatch()": {
+      "code": "error ERC725X_ExecuteParametersLengthMismatch()",
+      "inputs": {},
+      "details": "Reverts when there is not the same number of elements in the `operationTypes`, `targets` addresses, `values`, and `datas` array parameters provided when calling the {executeBatch} function."
+    },
+    "ERC725X_InsufficientBalance(uint256,uint256)": {
+      "code": "error ERC725X_InsufficientBalance(uint256 balance, uint256 value)",
+      "inputs": {
+        "balance": {
+          "type": "uint256",
+          "description": "The balance of native tokens of the ERC725X smart contract."
+        },
+        "value": {
+          "type": "uint256",
+          "description": "The amount of native tokens sent via `ERC725X.execute(...)`/`ERC725X.executeBatch(...)` that is greater than the contract's `balance`."
+        }
+      },
+      "details": "Reverts when trying to send more native tokens `value` than available in current `balance`."
+    },
+    "ERC725X_MsgValueDisallowedInDelegateCall()": {
+      "code": "error ERC725X_MsgValueDisallowedInDelegateCall()",
+      "inputs": {},
+      "details": "Reverts when trying to send native tokens (`value` / `values[]` parameter of {execute} or {executeBatch} functions) while making a `delegatecall` (`operationType == 4`). Sending native tokens via `staticcall` is not allowed because `msg.value` is persisting."
+    },
+    "ERC725X_MsgValueDisallowedInStaticCall()": {
+      "code": "error ERC725X_MsgValueDisallowedInStaticCall()",
+      "inputs": {},
+      "details": "Reverts when trying to send native tokens (`value` / `values[]` parameter of {execute} or {executeBatch} functions) while making a `staticcall` (`operationType == 3`). Sending native tokens via `staticcall` is not allowed because it is a state changing operation."
+    },
+    "ERC725X_NoContractBytecodeProvided()": {
+      "code": "error ERC725X_NoContractBytecodeProvided()",
+      "inputs": {},
+      "details": "Reverts when no contract bytecode was provided as parameter when trying to deploy a contract via {execute} or {executeBatch}. This error can occur using either operation type 1 (`CREATE`) or 2 (`CREATE2`)."
+    },
+    "ERC725X_UnknownOperationType(uint256)": {
+      "code": "error ERC725X_UnknownOperationType(uint256 operationTypeProvided)",
+      "inputs": {
+        "operationTypeProvided": {
+          "type": "uint256",
+          "description": "The unrecognised operation type number provided to `ERC725X.execute(...)`/`ERC725X.executeBatch(...)`."
+        }
+      },
+      "details": "Reverts when the `operationTypeProvided` is none of the default operation types available. (CALL = 0; CREATE = 1; CREATE2 = 2; STATICCALL = 3; DELEGATECALL = 4)"
+    },
+    "ERC725Y_DataKeysValuesEmptyArray()": {
+      "code": "error ERC725Y_DataKeysValuesEmptyArray()",
+      "inputs": {},
+      "details": "Reverts when one of the array parameter provided to {setDataBatch} function is an empty array."
+    },
+    "ERC725Y_DataKeysValuesLengthMismatch()": {
+      "code": "error ERC725Y_DataKeysValuesLengthMismatch()",
+      "inputs": {},
+      "details": "Reverts when there is not the same number of elements in the `datakeys` and `dataValues` array parameters provided when calling the {setDataBatch} function."
+    },
+    "LSP14CallerNotPendingOwner(address)": {
+      "code": "error LSP14CallerNotPendingOwner(address caller)",
+      "inputs": {
+        "caller": {
+          "type": "address",
+          "description": "The address that tried to accept ownership."
+        }
+      },
+      "details": "Reverts when the `caller` that is trying to accept ownership of the contract is not the pending owner."
+    },
+    "LSP14CannotTransferOwnershipToSelf()": {
+      "code": "error LSP14CannotTransferOwnershipToSelf()",
+      "inputs": {},
+      "notice": "Cannot transfer ownership to the address of the contract itself.",
+      "details": "Reverts when trying to transfer ownership to the `address(this)`."
+    },
+    "LSP14MustAcceptOwnershipInSeparateTransaction()": {
+      "code": "error LSP14MustAcceptOwnershipInSeparateTransaction()",
+      "inputs": {},
+      "notice": "Cannot accept ownership in the same transaction with {transferOwnership(...)}.",
+      "details": "Reverts when pending owner accept ownership in the same transaction of transferring ownership."
+    },
+    "LSP14NotInRenounceOwnershipInterval(uint256,uint256)": {
+      "code": "error LSP14NotInRenounceOwnershipInterval(uint256 renounceOwnershipStart, uint256 renounceOwnershipEnd)",
+      "inputs": {
+        "renounceOwnershipStart": {
+          "type": "uint256",
+          "description": "The start timestamp when one can confirm the renouncement of ownership."
+        },
+        "renounceOwnershipEnd": {
+          "type": "uint256",
+          "description": "The end timestamp when one can confirm the renouncement of ownership."
+        }
+      },
+      "notice": "Cannot confirm ownership renouncement yet. The ownership renouncement is allowed from: `renounceOwnershipStart` until: `renounceOwnershipEnd`.",
+      "details": "Reverts when trying to renounce ownership before the initial confirmation delay."
+    },
+    "LSP20CallVerificationFailed(bool,bytes4)": {
+      "code": "error LSP20CallVerificationFailed(bool postCall, bytes4 returnedStatus)",
+      "inputs": {
+        "postCall": {
+          "type": "bool",
+          "description": "True if the execution call was done, False otherwise"
+        },
+        "returnedStatus": {
+          "type": "bytes4",
+          "description": "The bytes4 decoded data returned by the logic verifier."
+        }
+      },
+      "details": "reverts when the call to the owner does not return the LSP20 success value"
+    },
+    "LSP20CallingVerifierFailed(bool)": {
+      "code": "error LSP20CallingVerifierFailed(bool postCall)",
+      "inputs": {
+        "postCall": {
+          "type": "bool",
+          "description": "True if the execution call was done, False otherwise"
+        }
+      },
+      "details": "reverts when the call to the owner fail with no revert reason"
+    },
+    "LSP20EOACannotVerifyCall(address)": {
+      "code": "error LSP20EOACannotVerifyCall(address logicVerifier)",
+      "inputs": {
+        "logicVerifier": {
+          "type": "address",
+          "description": "The address of the logic verifier"
+        }
+      },
+      "details": "Reverts when the logic verifier is an Externally Owned Account (EOA) that cannot return the LSP20 success value."
+    },
+    "NoExtensionFoundForFunctionSelector(bytes4)": {
+      "code": "error NoExtensionFoundForFunctionSelector(bytes4 functionSelector)",
+      "inputs": {
+        "functionSelector": {
+          "type": "bytes4"
+        }
+      },
+      "details": "reverts when there is no extension for the function selector being called with"
+    }
+  },
+  "internalMethods": {
+    "_checkOwner()": {
+      "code": "function _checkOwner() internal view",
+      "inputs": {},
+      "outputs": {},
+      "details": "Throws if the sender is not the owner."
+    },
+    "_setOwner(address)": {
+      "code": "function _setOwner(address newOwner) internal nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "details": "Changes the owner if `newOwner` and oldOwner are different\n This pattern is useful in inheritance."
+    },
+    "_execute(uint256,address,uint256,bytes)": {
+      "code": "function _execute(uint256 operationType, address target, uint256 value, bytes data) internal nonpayable returns (bytes)",
+      "inputs": {},
+      "outputs": {},
+      "details": "check the `operationType` provided and perform the associated low-level opcode after checking for requirements (see {execute})."
+    },
+    "_executeBatch(uint256[],address[],uint256[],bytes[])": {
+      "code": "function _executeBatch(uint256[] operationsType, address[] targets, uint256[] values, bytes[] datas) internal nonpayable returns (bytes[])",
+      "inputs": {},
+      "outputs": {},
+      "details": "check each `operationType` provided in the batch and perform the associated low-level opcode after checking for requirements (see {executeBatch})."
+    },
+    "_executeCall(address,uint256,bytes)": {
+      "code": "function _executeCall(address target, uint256 value, bytes data) internal nonpayable returns (bytes result)",
+      "inputs": {
+        "target": {
+          "type": "address",
+          "description": "The address on which call is executed"
+        },
+        "value": {
+          "type": "uint256",
+          "description": "The value to be sent with the call"
+        },
+        "data": {
+          "type": "bytes",
+          "description": "The data to be sent with the call"
+        }
+      },
+      "outputs": {
+        "result": {
+          "type": "bytes",
+          "description": "The data from the call"
+        }
+      },
+      "details": "Perform low-level call (operation type = 0)"
+    },
+    "_executeStaticCall(address,bytes)": {
+      "code": "function _executeStaticCall(address target, bytes data) internal nonpayable returns (bytes result)",
+      "inputs": {
+        "target": {
+          "type": "address",
+          "description": "The address on which staticcall is executed"
+        },
+        "data": {
+          "type": "bytes",
+          "description": "The data to be sent with the staticcall"
+        }
+      },
+      "outputs": {
+        "result": {
+          "type": "bytes",
+          "description": "The data returned from the staticcall"
+        }
+      },
+      "details": "Perform low-level staticcall (operation type = 3)"
+    },
+    "_executeDelegateCall(address,bytes)": {
+      "code": "function _executeDelegateCall(address target, bytes data) internal nonpayable returns (bytes result)",
+      "inputs": {
+        "target": {
+          "type": "address",
+          "description": "The address on which delegatecall is executed"
+        },
+        "data": {
+          "type": "bytes",
+          "description": "The data to be sent with the delegatecall"
+        }
+      },
+      "outputs": {
+        "result": {
+          "type": "bytes",
+          "description": "The data returned from the delegatecall"
+        }
+      },
+      "details": "Perform low-level delegatecall (operation type = 4)",
+      "custom:warning": "The `msg.value` should not be trusted for any method called with `operationType`: `DELEGATECALL` (4)."
+    },
+    "_deployCreate(uint256,bytes)": {
+      "code": "function _deployCreate(uint256 value, bytes creationCode) internal nonpayable returns (bytes newContract)",
+      "inputs": {
+        "value": {
+          "type": "uint256",
+          "description": "The value to be sent to the contract created"
+        },
+        "creationCode": {
+          "type": "bytes",
+          "description": "The contract creation bytecode to deploy appended with the constructor argument(s)"
+        }
+      },
+      "outputs": {
+        "newContract": {
+          "type": "bytes",
+          "description": "The address of the contract created as bytes"
+        }
+      },
+      "details": "Deploy a contract using the `CREATE` opcode (operation type = 1)"
+    },
+    "_deployCreate2(uint256,bytes)": {
+      "code": "function _deployCreate2(uint256 value, bytes creationCode) internal nonpayable returns (bytes newContract)",
+      "inputs": {
+        "value": {
+          "type": "uint256",
+          "description": "The value to be sent to the contract created"
+        },
+        "creationCode": {
+          "type": "bytes",
+          "description": "The contract creation bytecode to deploy appended with the constructor argument(s) and a bytes32 salt"
+        }
+      },
+      "outputs": {
+        "newContract": {
+          "type": "bytes",
+          "description": "The address of the contract created as bytes"
+        }
+      },
+      "details": "Deploy a contract using the `CREATE2` opcode (operation type = 2)"
+    },
+    "_getData(bytes32)": {
+      "code": "function _getData(bytes32 dataKey) internal view returns (bytes dataValue)",
+      "inputs": {
+        "dataKey": {
+          "type": "bytes32",
+          "description": "A bytes32 data key to read the associated `bytes` value from the store."
+        }
+      },
+      "outputs": {
+        "dataValue": {
+          "type": "bytes",
+          "description": "The `bytes` value associated with the given `dataKey` in the ERC725Y storage."
+        }
+      },
+      "details": "Read the value stored under a specific `dataKey` inside the underlying ERC725Y storage,\n  represented as a mapping of `bytes32` data keys mapped to their `bytes` data values.\n ```solidity\n mapping(bytes32 => bytes) _store\n ```"
+    },
+    "_setData(bytes32,bytes)": {
+      "code": "function _setData(bytes32 dataKey, bytes dataValue) internal nonpayable",
+      "inputs": {
+        "dataKey": {
+          "type": "bytes32",
+          "description": "A bytes32 data key to write the associated `bytes` value to the store."
+        },
+        "dataValue": {
+          "type": "bytes",
+          "description": "The `bytes` value to associate with the given `dataKey` in the ERC725Y storage."
+        }
+      },
+      "outputs": {},
+      "details": "Write a `dataValue` to the underlying ERC725Y storage, represented as a mapping of\n `bytes32` data keys mapped to their `bytes` data values.\n ```solidity\n mapping(bytes32 => bytes) _store\n ```",
+      "custom:events": "{DataChanged} event emitted after a successful `setData` call."
+    },
+    "_transferOwnership(address)": {
+      "code": "function _transferOwnership(address newOwner) internal nonpayable",
+      "inputs": {
+        "newOwner": {
+          "type": "address",
+          "description": "The address of the new pending owner."
+        }
+      },
+      "outputs": {},
+      "details": "Set the pending owner of the contract and cancel any renounce ownership process that was previously started.",
+      "custom:requirements": "`newOwner` cannot be the address of the contract itself."
+    },
+    "_acceptOwnership()": {
+      "code": "function _acceptOwnership() internal nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "details": "Set the pending owner of the contract as the new owner."
+    },
+    "_renounceOwnership()": {
+      "code": "function _renounceOwnership() internal nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "details": "Initiate or confirm the process of renouncing ownership after a specific delay of blocks have passed."
+    },
+    "_supportsInterfaceInERC165Extension(bytes4)": {
+      "code": "function _supportsInterfaceInERC165Extension(bytes4 interfaceId) internal view returns (bool)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns whether the interfaceId being checked is supported in the extension of the\n {supportsInterface} selector.\n To be used by extendable contracts wishing to extend the ERC165 interfaceIds originally\n supported by reading whether the interfaceId queried is supported in the `supportsInterface`\n extension if the extension is set, if not it returns false."
+    },
+    "_getExtensionAndForwardValue(bytes4)": {
+      "code": "function _getExtensionAndForwardValue(bytes4 functionSelector) internal view returns (address, bool)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns the extension address and the boolean indicating whether to forward the value received to the extension, stored under the following data key:\n - {_LSP17_EXTENSION_PREFIX} + `<bytes4>` (Check [LSP2-ERC725YJSONSchema] for encoding the data key).\n - If no extension is stored, returns the address(0).\n - If the stored value is 20 bytes, return false for the boolean"
+    },
+    "_fallbackLSP17Extendable(bytes)": {
+      "code": "function _fallbackLSP17Extendable(bytes callData) internal nonpayable returns (bytes)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Forwards the call to an extension mapped to a function selector.\n Calls {_getExtensionAndForwardValue} to get the address of the extension mapped to the function selector being\n called on the account. If there is no extension, the `address(0)` will be returned.\n Forwards the value sent with the call to the extension if the function selector is mapped to a payable extension.\n Reverts if there is no extension for the function being called, except for the `bytes4(0)` function selector, which passes even if there is no extension for it.\n If there is an extension for the function selector being called, it calls the extension with the\n `CALL` opcode, passing the `msg.data` appended with the 20 bytes of the {msg.sender} and 32 bytes of the `msg.value`.",
+      "custom:hint": "If you would like to forward the `msg.value` to the extension contract, you should store an additional `0x01` byte after the address of the extension under the corresponding LSP17 data key."
+    },
+    "_verifyCall(address)": {
+      "code": "function _verifyCall(address logicVerifier) internal nonpayable returns (bool verifyAfter)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Calls {lsp20VerifyCall} function on the logicVerifier.",
+      "custom:info\n": "- Reverts in case the value returned does not match the returned status (lsp20VerifyCall selector).\n - Returns whether a verification after the execution should happen based on the last byte of the `returnedStatus`.\n - Reverts with no reason if the  data returned by `ILSP20(logicVerifier).lsp20VerifyCall(...)` cannot be decoded (_e.g:_ any other data type besides `bytes4`).\n See this link for more info: https://forum.soliditylang.org/t/call-for-feedback-the-future-of-try-catch-in-solidity/1497."
+    },
+    "_verifyCallResult(address,bytes)": {
+      "code": "function _verifyCallResult(address logicVerifier, bytes callResult) internal nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "details": "Calls {lsp20VerifyCallResult} function on the logicVerifier.",
+      "custom:info\n": "- Reverts in case the value returned does not match the returned status (lsp20VerifyCallResult selector).\n - Reverts with no reason if the data returned by `ILSP20(logicVerifier).lsp20VerifyCallResult(...)` cannot be decoded (_e.g:_ any other data type besides `bytes4`).\n See this link for more info: https://forum.soliditylang.org/t/call-for-feedback-the-future-of-try-catch-in-solidity/1497."
+    },
+    "_revertWithLSP20DefaultError(bool,bytes)": {
+      "code": "function _revertWithLSP20DefaultError(bool postCall, bytes returnedData) internal pure",
+      "inputs": {},
+      "outputs": {}
+    }
+  },
+  "path": "@lukso/lsp-smart-contracts/contracts/LSP0ERC725Account",
+  "title": "Deployable Implementation of [LSP-0-ERC725Account] Standard.",
+  "details": "A smart contract account including basic functionalities such as: - Detecting supported standards using [ERC-165] - Executing several operation on other addresses including creating contracts using [ERC-725X] - A generic data key-value store using [ERC-725Y] - Validating signatures using [ERC-1271] - Receiving notification and react on them using [LSP-1-UniversalReceiver] - Safer ownership management through 2-steps transfer using [LSP-14-Ownable2Step] - Extending the account with new functions and interfaceIds of future standards using [LSP-17-ContractExtension] - Verifying calls on the owner to make it easier to interact with the account directly using [LSP-20-CallVerification]",
+  "author": "Fabian Vogelsteller <fabian@lukso.network>, Jean Cavallera (CJ42)",
+  "name": "LSP0ERC725Account"
+}

@@ -1,0 +1,30 @@
+{
+  "methods": {},
+  "events": {},
+  "errors": {},
+  "internalMethods": {
+    "_verifyCall(address)": {
+      "code": "function _verifyCall(address logicVerifier) internal nonpayable returns (bool verifyAfter)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Calls {lsp20VerifyCall} function on the logicVerifier.",
+      "custom:info\n": "- Reverts in case the value returned does not match the returned status (lsp20VerifyCall selector).\n - Returns whether a verification after the execution should happen based on the last byte of the `returnedStatus`.\n - Reverts with no reason if the  data returned by `ILSP20(logicVerifier).lsp20VerifyCall(...)` cannot be decoded (_e.g:_ any other data type besides `bytes4`).\n See this link for more info: https://forum.soliditylang.org/t/call-for-feedback-the-future-of-try-catch-in-solidity/1497."
+    },
+    "_verifyCallResult(address,bytes)": {
+      "code": "function _verifyCallResult(address logicVerifier, bytes callResult) internal nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "details": "Calls {lsp20VerifyCallResult} function on the logicVerifier.",
+      "custom:info\n": "- Reverts in case the value returned does not match the returned status (lsp20VerifyCallResult selector).\n - Reverts with no reason if the data returned by `ILSP20(logicVerifier).lsp20VerifyCallResult(...)` cannot be decoded (_e.g:_ any other data type besides `bytes4`).\n See this link for more info: https://forum.soliditylang.org/t/call-for-feedback-the-future-of-try-catch-in-solidity/1497."
+    },
+    "_revertWithLSP20DefaultError(bool,bytes)": {
+      "code": "function _revertWithLSP20DefaultError(bool postCall, bytes returnedData) internal pure",
+      "inputs": {},
+      "outputs": {}
+    }
+  },
+  "path": "@lukso/lsp-smart-contracts/contracts/LSP20CallVerification",
+  "title": "Implementation of a contract calling the verification functions according to LSP20 - Call Verification standard.",
+  "details": "Module to be inherited used to verify the execution of functions according to a verifier address. Verification can happen before or after execution based on a returnedStatus.",
+  "name": "LSP20CallVerification"
+}

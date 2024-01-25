@@ -1,0 +1,66 @@
+{
+  "methods": {
+    "universalReceiver(bytes32,bytes)": {
+      "stateMutability": "payable",
+      "code": "function universalReceiver(bytes32 typeId, bytes data) external payable returns (bytes)",
+      "inputs": {
+        "typeId": {
+          "type": "bytes32",
+          "description": "The hash of a specific standard or a hook."
+        },
+        "data": {
+          "type": "bytes",
+          "description": "The arbitrary data received with the call."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes"
+        }
+      },
+      "notice": "Reacted on received notification with `typeId` & `data`.",
+      "details": "Generic function that can be used to notify the contract about specific incoming transactions or events like asset transfers, vault transfers, etc. Allows for custom on-chain and off-chain reactions based on the `typeId` and `data`.",
+      "custom:events": "{UniversalReceiver} event."
+    }
+  },
+  "events": {
+    "UniversalReceiver(address,uint256,bytes32,bytes,bytes)": {
+      "code": "event UniversalReceiver(address indexed from, uint256 indexed value, bytes32 indexed typeId, bytes receivedData, bytes returnedValue)",
+      "inputs": {
+        "from": {
+          "type": "address",
+          "indexed": true,
+          "description": "The address of the EOA or smart contract that called the {universalReceiver(...)} function."
+        },
+        "value": {
+          "type": "uint256",
+          "indexed": true,
+          "description": "The amount sent to the {universalReceiver(...)} function."
+        },
+        "typeId": {
+          "type": "bytes32",
+          "indexed": true,
+          "description": "A `bytes32` unique identifier (= _\"hook\"_)that describe the type of notification, information or transaction received by the contract. Can be related to a specific standard or a hook."
+        },
+        "receivedData": {
+          "type": "bytes",
+          "indexed": false,
+          "description": "Any arbitrary data that was sent to the {universalReceiver(...)} function."
+        },
+        "returnedValue": {
+          "type": "bytes",
+          "indexed": false,
+          "description": "The value returned by the {universalReceiver(...)} function."
+        }
+      },
+      "notice": "Address `from` called the `universalReceiver(...)` function while sending `value` LYX. Notification type (typeId): `typeId` - Data received: `receivedData`.",
+      "details": "Emitted when the {universalReceiver} function was called with a specific `typeId` and some `receivedData`"
+    }
+  },
+  "errors": {},
+  "internalMethods": {},
+  "path": "@lukso/lsp-smart-contracts/contracts/LSP1UniversalReceiver",
+  "title": "Interface of the LSP1 - Universal Receiver standard, an entry function for a contract to receive arbitrary information.",
+  "details": "LSP1UniversalReceiver allows to receive arbitrary messages and to be informed when assets are sent or received.",
+  "name": "ILSP1UniversalReceiver"
+}

@@ -1,0 +1,40 @@
+{
+  "methods": {
+    "universalReceiverDelegate(address,uint256,bytes32,bytes)": {
+      "stateMutability": "nonpayable",
+      "code": "function universalReceiverDelegate(address sender, uint256 value, bytes32 typeId, bytes data) external nonpayable returns (bytes)",
+      "inputs": {
+        "sender": {
+          "type": "address",
+          "description": "The address of the EOA or smart contract that initially called the `universalReceiver` function."
+        },
+        "value": {
+          "type": "uint256",
+          "description": "The amount sent by the `sender` to the `universalReceiver` function."
+        },
+        "typeId": {
+          "type": "bytes32",
+          "description": "The hash of a specific standard or a hook."
+        },
+        "data": {
+          "type": "bytes",
+          "description": "The arbitrary data received with the initial call to `universalReceiver`."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes"
+        }
+      },
+      "notice": "Reacted on received notification forwarded from `universalReceiver` with `typeId` & `data`.",
+      "details": "A delegate function that reacts to calls forwarded from the `universalReceiver(..)` function. This allows for modular handling of the logic based on the `typeId` and `data` provided by the initial caller."
+    }
+  },
+  "events": {},
+  "errors": {},
+  "internalMethods": {},
+  "path": "@lukso/lsp-smart-contracts/contracts/LSP1UniversalReceiver",
+  "title": "Interface of the LSP1 - Universal Receiver Delegate standard.",
+  "details": "This interface allows contracts implementing the LSP1UniversalReceiver function to delegate the reaction logic to another contract or account. By doing so, the main logic doesn't need to reside within the `universalReceiver` function itself, offering modularity and flexibility.",
+  "name": "ILSP1UniversalReceiverDelegate"
+}

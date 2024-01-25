@@ -1,0 +1,69 @@
+{
+  "methods": {},
+  "events": {},
+  "errors": {},
+  "internalMethods": {
+    "notifyUniversalReceiver(address,bytes32,bytes)": {
+      "code": "function notifyUniversalReceiver(address lsp1Implementation, bytes32 typeId, bytes data) internal nonpayable",
+      "inputs": {
+        "lsp1Implementation": {
+          "type": "address",
+          "description": "The address of the contract to notify."
+        },
+        "typeId": {
+          "type": "bytes32",
+          "description": "A `bytes32` typeId."
+        },
+        "data": {
+          "type": "bytes",
+          "description": "Any optional data to send to the `universalReceiver` function to the `lsp1Implementation` address."
+        }
+      },
+      "outputs": {},
+      "details": "Notify a contract at `lsp1Implementation` address by calling its `universalReceiver` function if this contract\n supports the LSP1 interface."
+    },
+    "getLSP1DelegateValue(mapping(bytes32 => bytes))": {
+      "code": "function getLSP1DelegateValue(mapping(bytes32 => bytes) erc725YStorage) internal view returns (bytes)",
+      "inputs": {
+        "erc725YStorage": {
+          "type": "mapping(bytes32 => bytes)",
+          "description": "A reference to the ERC725Y storage mapping of the contract."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes",
+          "description": "The bytes value stored under the `LSP1UniversalReceiverDelegate` data key."
+        }
+      },
+      "notice": "Retrieving the value stored under the ERC725Y data key `LSP1UniversalReceiverDelegate`.",
+      "details": "Query internally the ERC725Y storage of a `ERC725Y` smart contract to retrieve\n the value set under the `LSP1UniversalReceiverDelegate` data key."
+    },
+    "getLSP1DelegateValueForTypeId(mapping(bytes32 => bytes),bytes32)": {
+      "code": "function getLSP1DelegateValueForTypeId(mapping(bytes32 => bytes) erc725YStorage, bytes32 typeId) internal view returns (bytes)",
+      "inputs": {
+        "erc725YStorage": {
+          "type": "mapping(bytes32 => bytes)",
+          "description": "A reference to the ERC725Y storage mapping of the contract."
+        },
+        "typeId": {
+          "type": "bytes32",
+          "description": "A bytes32 LSP1 `typeId`;"
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes",
+          "description": "The bytes value stored under the `LSP1UniversalReceiverDelegate:<bytes32>` data key."
+        }
+      },
+      "notice": "Retrieving the value stored under the ERC725Y data key `LSP1UniversalReceiverDelegate:<type-id>` for a specific `typeId`.",
+      "details": "Query internally the ERC725Y storage of a `ERC725Y` smart contract to retrieve\n the value set under the `LSP1UniversalReceiverDelegate:<bytes32>` data key for a specific LSP1 `typeId`."
+    }
+  },
+  "path": "@lukso/lsp-smart-contracts/contracts/LSP1UniversalReceiver",
+  "title": "LSP1 Utility library.",
+  "details": "LSP1Utils is a library of utility functions that can be used to notify the `universalReceiver` function of a contract that implements LSP1 and retrieve informations related to LSP1 `typeId`. Based on LSP1 Universal Receiver standard.",
+  "author": "Jean Cavallera <CJ42>, Yamen Merhi <YamenMerhi>, Daniel Afteni <B00ste>",
+  "name": "LSP1Utils"
+}

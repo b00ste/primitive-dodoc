@@ -1,0 +1,391 @@
+{
+  "methods": {
+    "execute(uint256,address,uint256,bytes)": {
+      "stateMutability": "payable",
+      "code": "function execute(uint256 operationType, address target, uint256 value, bytes data) external payable returns (bytes)",
+      "inputs": {
+        "operationType": {
+          "type": "uint256",
+          "description": "The operation type used: CALL = 0; CREATE = 1; CREATE2 = 2; STATICCALL = 3; DELEGATECALL = 4"
+        },
+        "target": {
+          "type": "address",
+          "description": "The address of the EOA or smart contract.  (unused if a contract is created via operation type 1 or 2)"
+        },
+        "value": {
+          "type": "uint256",
+          "description": "The amount of native tokens to transfer (in Wei)"
+        },
+        "data": {
+          "type": "bytes",
+          "description": "The call data, or the creation bytecode of the contract to deploy if `operationType` is `1` or `2`."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes"
+        }
+      },
+      "notice": "Calling address `target` using `operationType`, transferring `value` wei and data: `data`.",
+      "details": "Generic executor function to: - send native tokens to any address. - interact with any contract by passing an abi-encoded function call in the `data` parameter. - deploy a contract by providing its creation bytecode in the `data` parameter.",
+      "custom:events": "- {Executed} event when a call is made with `operationType` 0 (CALL), 3 (STATICCALL) or 4 (DELEGATECALL). - {ContractCreated} event when deploying a new contract with `operationType` 1 (CREATE) or 2 (CREATE2).",
+      "custom:requirements": "- SHOULD only be callable by the {owner} of the contract. - if a `value` is provided, the contract MUST have at least this amount to transfer to `target` from its balance and execute successfully. - if the operation type is `STATICCALL` (`3`) or `DELEGATECALL` (`4`), `value` transfer is disallowed and SHOULD be 0. - `target` SHOULD be `address(0)` when deploying a new contract via `operationType` `CREATE` (`1`), or `CREATE2` (`2`)."
+    },
+    "executeBatch(uint256[],address[],uint256[],bytes[])": {
+      "stateMutability": "payable",
+      "code": "function executeBatch(uint256[] operationsType, address[] targets, uint256[] values, bytes[] datas) external payable returns (bytes[])",
+      "inputs": {
+        "operationsType": {
+          "type": "uint256[]",
+          "description": "The list of operations type used: `CALL = 0`; `CREATE = 1`; `CREATE2 = 2`; `STATICCALL = 3`; `DELEGATECALL = 4`"
+        },
+        "targets": {
+          "type": "address[]",
+          "description": "The list of addresses to call. `targets` will be unused if a contract is created (operation types 1 and 2)."
+        },
+        "values": {
+          "type": "uint256[]",
+          "description": "The list of native token amounts to transfer (in Wei)."
+        },
+        "datas": {
+          "type": "bytes[]",
+          "description": "The list of calldata, or the creation bytecode of the contract to deploy if `operationType` is `1` or `2`."
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bytes[]"
+        }
+      },
+      "notice": "Calling multiple addresses `targets` using `operationsType`, transferring `values` wei and data: `datas`.",
+      "details": "Batch executor function that behaves the same as {execute} but allowing multiple operations in the same transaction.",
+      "custom:events": "- {Executed} event, when a call is made with `operationType` 0 (CALL), 3 (STATICCALL) or 4 (DELEGATECALL) - {ContractCreated} event, when deploying a contract with `operationType` 1 (CREATE) or 2 (CREATE2)",
+      "custom:requirements": "- All the array parameters provided MUST be equal and have the same length. - SHOULD only be callable by the {owner} of the contract. - The contract MUST have in its balance **at least the sum of all the `values`** to transfer and execute successfully each calldata payloads.",
+      "custom:warning": "- The `msg.value` should not be trusted for any method called with `operationType`: `DELEGATECALL` (4)."
+    },
+    "owner()": {
+      "stateMutability": "view",
+      "code": "function owner() external view returns (address)",
+      "inputs": {},
+      "outputs": {
+        "_0": {
+          "type": "address"
+        }
+      },
+      "details": "Returns the address of the current owner."
+    },
+    "renounceOwnership()": {
+      "stateMutability": "nonpayable",
+      "code": "function renounceOwnership() external nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+    },
+    "supportsInterface(bytes4)": {
+      "stateMutability": "view",
+      "code": "function supportsInterface(bytes4 interfaceId) external view returns (bool)",
+      "inputs": {
+        "interfaceId": {
+          "type": "bytes4"
+        }
+      },
+      "outputs": {
+        "_0": {
+          "type": "bool"
+        }
+      },
+      "details": "See {IERC165-supportsInterface}."
+    },
+    "transferOwnership(address)": {
+      "stateMutability": "nonpayable",
+      "code": "function transferOwnership(address newOwner) external nonpayable",
+      "inputs": {
+        "newOwner": {
+          "type": "address"
+        }
+      },
+      "outputs": {},
+      "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+    }
+  },
+  "events": {
+    "ContractCreated(uint256,address,uint256,bytes32)": {
+      "code": "event ContractCreated(uint256 indexed operationType, address indexed contractAddress, uint256 value, bytes32 indexed salt)",
+      "inputs": {
+        "operationType": {
+          "type": "uint256",
+          "indexed": true,
+          "description": "The opcode used to deploy the contract (`CREATE` or `CREATE2`)."
+        },
+        "contractAddress": {
+          "type": "address",
+          "indexed": true,
+          "description": "The created contract address."
+        },
+        "value": {
+          "type": "uint256",
+          "indexed": false,
+          "description": "The amount of native tokens (in Wei) sent to fund the created contract on deployment."
+        },
+        "salt": {
+          "type": "bytes32",
+          "indexed": true,
+          "description": "The salt used to deterministically deploy the contract (`CREATE2` only). If `CREATE` opcode is used, the salt value will be `bytes32(0)`."
+        }
+      },
+      "notice": "Deployed new contract at address `contractAddress` and funded with `value` wei (deployed using opcode: `operationType`).",
+      "details": "Emitted when a new contract was created and deployed."
+    },
+    "Executed(uint256,address,uint256,bytes4)": {
+      "code": "event Executed(uint256 indexed operationType, address indexed target, uint256 value, bytes4 indexed selector)",
+      "inputs": {
+        "operationType": {
+          "type": "uint256",
+          "indexed": true,
+          "description": "The low-level call opcode used to call the `target` address (`CALL`, `STATICALL` or `DELEGATECALL`)."
+        },
+        "target": {
+          "type": "address",
+          "indexed": true,
+          "description": "The address to call. `target` will be unused if a contract is created (operation types 1 and 2)."
+        },
+        "value": {
+          "type": "uint256",
+          "indexed": false,
+          "description": "The amount of native tokens transferred along the call (in Wei)."
+        },
+        "selector": {
+          "type": "bytes4",
+          "indexed": true,
+          "description": "The first 4 bytes (= function selector) of the data sent with the call."
+        }
+      },
+      "notice": "Called address `target` using `operationType` with `value` wei and `data`.",
+      "details": "Emitted when calling an address `target` (EOA or contract) with `value`."
+    },
+    "OwnershipTransferred(address,address)": {
+      "code": "event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)",
+      "inputs": {
+        "previousOwner": {
+          "type": "address",
+          "indexed": true
+        },
+        "newOwner": {
+          "type": "address",
+          "indexed": true
+        }
+      }
+    }
+  },
+  "errors": {
+    "ERC725X_ContractDeploymentFailed()": {
+      "code": "error ERC725X_ContractDeploymentFailed()",
+      "inputs": {},
+      "details": "Reverts when contract deployment failed via {execute} or {executeBatch} functions, This error can occur using either operation type 1 (`CREATE`) or 2 (`CREATE2`)."
+    },
+    "ERC725X_CreateOperationsRequireEmptyRecipientAddress()": {
+      "code": "error ERC725X_CreateOperationsRequireEmptyRecipientAddress()",
+      "inputs": {},
+      "details": "Reverts when passing a `to` address that is not `address(0)` (= address zero) while deploying a contract via {execute} or {executeBatch} functions. This error can occur using either operation type 1 (`CREATE`) or 2 (`CREATE2`)."
+    },
+    "ERC725X_ExecuteParametersEmptyArray()": {
+      "code": "error ERC725X_ExecuteParametersEmptyArray()",
+      "inputs": {},
+      "details": "Reverts when one of the array parameter provided to the {executeBatch} function is an empty array."
+    },
+    "ERC725X_ExecuteParametersLengthMismatch()": {
+      "code": "error ERC725X_ExecuteParametersLengthMismatch()",
+      "inputs": {},
+      "details": "Reverts when there is not the same number of elements in the `operationTypes`, `targets` addresses, `values`, and `datas` array parameters provided when calling the {executeBatch} function."
+    },
+    "ERC725X_InsufficientBalance(uint256,uint256)": {
+      "code": "error ERC725X_InsufficientBalance(uint256 balance, uint256 value)",
+      "inputs": {
+        "balance": {
+          "type": "uint256",
+          "description": "The balance of native tokens of the ERC725X smart contract."
+        },
+        "value": {
+          "type": "uint256",
+          "description": "The amount of native tokens sent via `ERC725X.execute(...)`/`ERC725X.executeBatch(...)` that is greater than the contract's `balance`."
+        }
+      },
+      "details": "Reverts when trying to send more native tokens `value` than available in current `balance`."
+    },
+    "ERC725X_MsgValueDisallowedInDelegateCall()": {
+      "code": "error ERC725X_MsgValueDisallowedInDelegateCall()",
+      "inputs": {},
+      "details": "Reverts when trying to send native tokens (`value` / `values[]` parameter of {execute} or {executeBatch} functions) while making a `delegatecall` (`operationType == 4`). Sending native tokens via `staticcall` is not allowed because `msg.value` is persisting."
+    },
+    "ERC725X_MsgValueDisallowedInStaticCall()": {
+      "code": "error ERC725X_MsgValueDisallowedInStaticCall()",
+      "inputs": {},
+      "details": "Reverts when trying to send native tokens (`value` / `values[]` parameter of {execute} or {executeBatch} functions) while making a `staticcall` (`operationType == 3`). Sending native tokens via `staticcall` is not allowed because it is a state changing operation."
+    },
+    "ERC725X_NoContractBytecodeProvided()": {
+      "code": "error ERC725X_NoContractBytecodeProvided()",
+      "inputs": {},
+      "details": "Reverts when no contract bytecode was provided as parameter when trying to deploy a contract via {execute} or {executeBatch}. This error can occur using either operation type 1 (`CREATE`) or 2 (`CREATE2`)."
+    },
+    "ERC725X_UnknownOperationType(uint256)": {
+      "code": "error ERC725X_UnknownOperationType(uint256 operationTypeProvided)",
+      "inputs": {
+        "operationTypeProvided": {
+          "type": "uint256",
+          "description": "The unrecognised operation type number provided to `ERC725X.execute(...)`/`ERC725X.executeBatch(...)`."
+        }
+      },
+      "details": "Reverts when the `operationTypeProvided` is none of the default operation types available. (CALL = 0; CREATE = 1; CREATE2 = 2; STATICCALL = 3; DELEGATECALL = 4)"
+    },
+    "OwnableCallerNotTheOwner(address)": {
+      "code": "error OwnableCallerNotTheOwner(address callerAddress)",
+      "inputs": {
+        "callerAddress": {
+          "type": "address",
+          "description": "The address that tried to make the call."
+        }
+      },
+      "details": "Reverts when only the owner is allowed to call the function."
+    },
+    "OwnableCannotSetZeroAddressAsOwner()": {
+      "code": "error OwnableCannotSetZeroAddressAsOwner()",
+      "inputs": {},
+      "details": "Reverts when trying to set `address(0)` as the contract owner when deploying the contract, initializing it or transferring ownership of the contract."
+    }
+  },
+  "internalMethods": {
+    "_checkOwner()": {
+      "code": "function _checkOwner() internal view",
+      "inputs": {},
+      "outputs": {},
+      "details": "Throws if the sender is not the owner."
+    },
+    "_setOwner(address)": {
+      "code": "function _setOwner(address newOwner) internal nonpayable",
+      "inputs": {},
+      "outputs": {},
+      "details": "Changes the owner if `newOwner` and oldOwner are different\n This pattern is useful in inheritance."
+    },
+    "_execute(uint256,address,uint256,bytes)": {
+      "code": "function _execute(uint256 operationType, address target, uint256 value, bytes data) internal nonpayable returns (bytes)",
+      "inputs": {},
+      "outputs": {},
+      "details": "check the `operationType` provided and perform the associated low-level opcode after checking for requirements (see {execute})."
+    },
+    "_executeBatch(uint256[],address[],uint256[],bytes[])": {
+      "code": "function _executeBatch(uint256[] operationsType, address[] targets, uint256[] values, bytes[] datas) internal nonpayable returns (bytes[])",
+      "inputs": {},
+      "outputs": {},
+      "details": "check each `operationType` provided in the batch and perform the associated low-level opcode after checking for requirements (see {executeBatch})."
+    },
+    "_executeCall(address,uint256,bytes)": {
+      "code": "function _executeCall(address target, uint256 value, bytes data) internal nonpayable returns (bytes result)",
+      "inputs": {
+        "target": {
+          "type": "address",
+          "description": "The address on which call is executed"
+        },
+        "value": {
+          "type": "uint256",
+          "description": "The value to be sent with the call"
+        },
+        "data": {
+          "type": "bytes",
+          "description": "The data to be sent with the call"
+        }
+      },
+      "outputs": {
+        "result": {
+          "type": "bytes",
+          "description": "The data from the call"
+        }
+      },
+      "details": "Perform low-level call (operation type = 0)"
+    },
+    "_executeStaticCall(address,bytes)": {
+      "code": "function _executeStaticCall(address target, bytes data) internal nonpayable returns (bytes result)",
+      "inputs": {
+        "target": {
+          "type": "address",
+          "description": "The address on which staticcall is executed"
+        },
+        "data": {
+          "type": "bytes",
+          "description": "The data to be sent with the staticcall"
+        }
+      },
+      "outputs": {
+        "result": {
+          "type": "bytes",
+          "description": "The data returned from the staticcall"
+        }
+      },
+      "details": "Perform low-level staticcall (operation type = 3)"
+    },
+    "_executeDelegateCall(address,bytes)": {
+      "code": "function _executeDelegateCall(address target, bytes data) internal nonpayable returns (bytes result)",
+      "inputs": {
+        "target": {
+          "type": "address",
+          "description": "The address on which delegatecall is executed"
+        },
+        "data": {
+          "type": "bytes",
+          "description": "The data to be sent with the delegatecall"
+        }
+      },
+      "outputs": {
+        "result": {
+          "type": "bytes",
+          "description": "The data returned from the delegatecall"
+        }
+      },
+      "details": "Perform low-level delegatecall (operation type = 4)",
+      "custom:warning": "The `msg.value` should not be trusted for any method called with `operationType`: `DELEGATECALL` (4)."
+    },
+    "_deployCreate(uint256,bytes)": {
+      "code": "function _deployCreate(uint256 value, bytes creationCode) internal nonpayable returns (bytes newContract)",
+      "inputs": {
+        "value": {
+          "type": "uint256",
+          "description": "The value to be sent to the contract created"
+        },
+        "creationCode": {
+          "type": "bytes",
+          "description": "The contract creation bytecode to deploy appended with the constructor argument(s)"
+        }
+      },
+      "outputs": {
+        "newContract": {
+          "type": "bytes",
+          "description": "The address of the contract created as bytes"
+        }
+      },
+      "details": "Deploy a contract using the `CREATE` opcode (operation type = 1)"
+    },
+    "_deployCreate2(uint256,bytes)": {
+      "code": "function _deployCreate2(uint256 value, bytes creationCode) internal nonpayable returns (bytes newContract)",
+      "inputs": {
+        "value": {
+          "type": "uint256",
+          "description": "The value to be sent to the contract created"
+        },
+        "creationCode": {
+          "type": "bytes",
+          "description": "The contract creation bytecode to deploy appended with the constructor argument(s) and a bytes32 salt"
+        }
+      },
+      "outputs": {
+        "newContract": {
+          "type": "bytes",
+          "description": "The address of the contract created as bytes"
+        }
+      },
+      "details": "Deploy a contract using the `CREATE2` opcode (operation type = 2)"
+    }
+  },
+  "path": "@erc725/smart-contracts/contracts",
+  "title": "Core implementation of ERC725X sub-standard, a generic executor.",
+  "author": "Fabian Vogelsteller <fabian@lukso.network> It allows to use different type of message calls to interact with addresses such as `call`, `staticcall` and `delegatecall`. It also allows to deploy and create new contracts via both the `create` and `create2` opcodes. This is the basis for a smart contract based account system, but could also be used as a proxy account system.",
+  "name": "ERC725XCore"
+}

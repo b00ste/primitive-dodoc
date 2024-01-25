@@ -1,0 +1,46 @@
+{
+  "methods": {},
+  "events": {},
+  "errors": {},
+  "internalMethods": {
+    "toString(uint256)": {
+      "code": "function toString(uint256 value) internal pure returns (string)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Converts a `uint256` to its ASCII `string` decimal representation."
+    },
+    "toString(int256)": {
+      "code": "function toString(int256 value) internal pure returns (string)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Converts a `int256` to its ASCII `string` decimal representation."
+    },
+    "toHexString(uint256)": {
+      "code": "function toHexString(uint256 value) internal pure returns (string)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Converts a `uint256` to its ASCII `string` hexadecimal representation."
+    },
+    "toHexString(uint256,uint256)": {
+      "code": "function toHexString(uint256 value, uint256 length) internal pure returns (string)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Converts a `uint256` to its ASCII `string` hexadecimal representation with fixed length."
+    },
+    "toHexString(address)": {
+      "code": "function toHexString(address addr) internal pure returns (string)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Converts an `address` with fixed length of 20 bytes to its not checksummed ASCII `string` hexadecimal representation."
+    },
+    "equal(string,string)": {
+      "code": "function equal(string a, string b) internal pure returns (bool)",
+      "inputs": {},
+      "outputs": {},
+      "details": "Returns true if the two strings are equal."
+    }
+  },
+  "path": "@openzeppelin/contracts/utils",
+  "details": "String operations.",
+  "name": "Strings"
+}
